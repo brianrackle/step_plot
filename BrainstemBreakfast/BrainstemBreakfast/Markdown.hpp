@@ -3,9 +3,6 @@
 
 namespace bsb
 {
-	//http://daringfireball.net/projects/markdown/basics
-	//objects: paragraph, table, blockqoute, inline qoute, list
-	//should convert to html equivalents
 	namespace markdown
 	{
 		//create markdown table header
@@ -78,6 +75,7 @@ namespace bsb
 			return std::string("\n\n") + content + "\n\n";
 		}
 
+		//create a markdown block quote
 		inline std::string block_quote(const char * content)
 		{
 			std::regex regex("\n");
