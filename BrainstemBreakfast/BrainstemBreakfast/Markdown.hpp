@@ -1,5 +1,6 @@
 #include <ostream>
 #include <regex>
+#include <string>
 
 namespace bsb
 {
@@ -13,9 +14,9 @@ namespace bsb
 		}
 
 		//table_header recursion base case
-		inline std::string table_header(const char * format)
+		inline std::string table_header(const char * format, const char  * name)
 		{
-			std::string output("|\n");
+			std::string output = std::string("| ") + name + "|\n";
 
 			for (char const* pos = format; *pos; ++pos)
 				switch (*pos)
@@ -36,16 +37,16 @@ namespace bsb
 		}
 
 		//create markdown table row
-		template <typename ... Types>
+		template <class ... Types>
 		inline std::string table_row(const char * first_content, Types  ... rest_content)
 		{
 			return std::string("| ") + first_content + " " + table_row(rest_content...);
 		}
 
 		//table_row recursion base case
-		inline std::string table_row()
+		inline std::string table_row(const char * content)
 		{
-			return "|\n";
+			return  std::string("| ") + content + "|\n";
 		}
 
 		//create markdown heading
