@@ -3,8 +3,8 @@
 int main()
 {
 	using namespace bsb::markdown;
-	std::vector<int> vec{ 1, 2, 3 };
 	std::ofstream outfile("outfile.txt");
-	outfile << table_header("llrr", "1", "2", "3", "4")
-		<< table_row("hi", "how", "are", "you");
+	outfile << table_header("llrr", "Word 1", "Word 2", "Word 3", "Word 4")
+		<< table_row("hi", "how", "are", "you")
+		<< table_row("I", "am", "fine", "thanks");
 }
