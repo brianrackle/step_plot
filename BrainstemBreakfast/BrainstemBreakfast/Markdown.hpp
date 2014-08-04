@@ -1,4 +1,4 @@
-#include <ostream>
+#pragma once
 #include <regex>
 #include <string>
 
