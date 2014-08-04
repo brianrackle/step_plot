@@ -1,18 +1,19 @@
 #pragma once
 #include <chrono>
+#include <type_traits>
 
 namespace bsb
 {
 	namespace time_it
 	{
-		template<class D, class F>
+		template<class D = std::chrono::nanoseconds, class F>
 		inline D time_it(F && f)
 		{
-			using hrc = std::chrono::high_resolution_clock;
+			using namespace std::chrono;
 
-			auto begin = hrc::now();
+			auto begin = steady_clock::now();
 			f();
-			auto end = hrc::now();
+			auto end = steady_clock::now();
 			return std::chrono::duration_cast<D>(end - begin);
 		}
 	}
