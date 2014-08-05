@@ -6,6 +6,7 @@
 int main()
 {
 	std::ofstream outfile("test.md");
+
 	bsb::markdown::test(outfile);
 	bsb::time_it::test(outfile);
 }

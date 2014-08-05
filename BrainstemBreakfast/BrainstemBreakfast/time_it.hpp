@@ -13,7 +13,7 @@ namespace bsb
 			auto begin = steady_clock::now();
 			f();
 			auto end = steady_clock::now();
-			return std::chrono::duration_cast<D>(end - begin);
+			return duration_cast<D>(end - begin);
 		}
 	}
 }
