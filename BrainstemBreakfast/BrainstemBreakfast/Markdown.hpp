@@ -8,7 +8,7 @@ namespace bsb
 	{
 		//create markdown table header
 		template<class ... Types>
-		inline std::string table_header(const char * format, const char  * first_name, Types ... rest_name)
+		inline std::string table_header(const char * format, const char  * first_name, const Types ... rest_name)
 		{
 			return std::string("| ") + first_name + " " + table_header(format, rest_name...);
 		}
@@ -38,7 +38,7 @@ namespace bsb
 
 		//create markdown table row
 		template <class ... Types>
-		inline std::string table_row(const char * first_content, Types  ... rest_content)
+		inline std::string table_row(const char * first_content, const Types  ... rest_content)
 		{
 			return std::string("| ") + first_content + " " + table_row(rest_content...);
 		}
@@ -50,7 +50,7 @@ namespace bsb
 		}
 
 		//create markdown heading
-		inline std::string heading(unsigned char const level, const char * name)
+		inline std::string heading(const unsigned char level, const char * name)
 		{
 			std::string output;
 			for (std::remove_const_t<decltype(level)> i = 0; i < level; ++i)
@@ -82,5 +82,37 @@ namespace bsb
 			std::regex regex("\n");
 			return "\n" + std::regex_replace(std::string("> ") + content, regex, "$&> ") + "\n";
 		}
+
+		template<class ... Types>
+		inline std::string span(const char * content, const char * first_style, Types ... rest_style)
+		{
+
+		}
+
+		inline std::string span(const char * content, const char * first_style)
+		{
+			//how to make this append styles on way down... append content on close on return..
+			std::string span = "<span style=\"";
+
+		}
+
+		//or pass color as a long like in link?
+		//converts rgb to hex
+		//http://stackoverflow.com/questions/14375156/how-to-convert-a-rgb-color-value-to-an-hexadecimal-value-in-c
+		inline std::string rgb_to_hex(const unsigned char r, const unsigned char g, const unsigned char b)
+		{
+
+		}
+
+		inline std::string background_color_style()
+		{
+
+		}
+
+		inline std::string color_style()
+		{
+			return "color:"
+		}
+
 	}
 }
