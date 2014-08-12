@@ -1,6 +1,7 @@
 #pragma once
 #include <regex>
 #include <string>
+#include <cstdlib>
 
 namespace bsb
 {
@@ -83,24 +84,11 @@ namespace bsb
 			return "\n" + std::regex_replace(std::string("> ") + content, regex, "$&> ") + "\n";
 		}
 
-		template<class ... Types>
-		inline std::string span(const char * content, const char * first_style, Types ... rest_style)
+		inline std::string uchar_to_hex(const unsigned char c)
 		{
-
-		}
-
-		inline std::string span(const char * content, const char * first_style)
-		{
-			//how to make this append styles on way down... append content on close on return..
-			std::string span = std::string("<span style=\"") + first_style;
-
-		}
-
-		//converts rgb to hex
-		//http://stackoverflow.com/questions/14375156/how-to-convert-a-rgb-color-value-to-an-hexadecimal-value-in-c
-		inline std::string rgb_to_hex(const unsigned char r, const unsigned char g, const unsigned char b)
-		{
-
+			char buff[10];
+			_itoa_s(c, buff, 16);
+			return buff;
 		}
 
 		enum class style_enum
@@ -109,7 +97,23 @@ namespace bsb
 			color
 		};
 
-		using style_type = std::pair < const style_enum, const std::string > ;
+		using style_type = std::pair < const style_enum, const std::string >;
+
+		template<class ... Types>
+		inline std::string span(const char * content, const style_type first_style, const Types ... rest_style)
+		{
+			return std::string(" <span ") +
+				populate_style(create_style(), first_style, rest_style...) + ">" +
+				content +
+				"</span> ";
+		}
+
+		//converts rgb to hex
+		//http://stackoverflow.com/questions/14375156/how-to-convert-a-rgb-color-value-to-an-hexadecimal-value-in-c
+		inline std::string rgb_to_hex(const unsigned char r, const unsigned char g, const unsigned char b)
+		{
+			return "0x" + uchar_to_hex(r) + uchar_to_hex(g) + uchar_to_hex(b);
+		}
 
 		inline std::string create_style()
 		{
@@ -117,8 +121,8 @@ namespace bsb
 		}
 
 		//populates style attribute (content) with styles
-		template <class ... S>
-		inline std::string populate_style(const char * content, const style_type first_style_t, const style_type ... rest_style_t)
+		template <class ... T>
+		inline std::string populate_style(const char * content, const style_type first_style_t, const T ... rest_style_t)
 		{
 			populate_style(populate_style(content, first_style_t), rest_style_t...);
 		}
