@@ -92,15 +92,53 @@ namespace bsb
 		inline std::string span(const char * content, const char * first_style)
 		{
 			//how to make this append styles on way down... append content on close on return..
-			std::string span = "<span style=\"";
+			std::string span = std::string("<span style=\"") + first_style;
 
 		}
 
-		//or pass color as a long like in link?
 		//converts rgb to hex
 		//http://stackoverflow.com/questions/14375156/how-to-convert-a-rgb-color-value-to-an-hexadecimal-value-in-c
 		inline std::string rgb_to_hex(const unsigned char r, const unsigned char g, const unsigned char b)
 		{
+
+		}
+
+		enum class style_enum
+		{
+			background_color = 0,
+			color
+		};
+
+		template <class T>
+		inline std::string style()
+		{
+
+		}
+
+		inline std::string style(const style_enum s, const char * value)
+		{
+			std::string all_styles = "style=\"\"";
+			std::regex regex("\"(.*?)\"");
+
+			
+			//append to match, and surround in qoutes
+			std::string style_text;
+			switch (s)
+			{
+			case style_enum::background_color:
+				style_text = "background_color:";
+				break;
+			case style_enum::color:
+				style_text = "color:";
+				break;
+			default:
+				break;
+			}
+
+			style_text += value;
+			style_text += ";";
+
+			all_styles = std::regex_replace(all_styles, regex, "$01" + style_text);
 
 		}
 
