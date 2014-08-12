@@ -109,21 +109,27 @@ namespace bsb
 			color
 		};
 
-		template <class T>
-		inline std::string style()
-		{
+		using style_type = std::pair < const style_enum, const std::string > ;
 
+		inline std::string create_style()
+		{
+			return "style=\"\"";
 		}
 
-		inline std::string style(const style_enum s, const char * value)
+		//populates style attribute (content) with styles
+		template <class ... S>
+		inline std::string populate_style(const char * content, const style_type first_style_t, const style_type ... rest_style_t)
 		{
-			std::string all_styles = "style=\"\"";
-			std::regex regex("\"(.*?)\"");
+			populate_style(populate_style(content, first_style_t), rest_style_t...);
+		}
 
+		//populates style attribute (content) with styles
+		inline std::string populate_style(const char * content, const style_type style_t)
+		{
+			std::regex regex("\"(.*?)\"");
 			
-			//append to match, and surround in qoutes
 			std::string style_text;
-			switch (s)
+			switch (style_t.first)
 			{
 			case style_enum::background_color:
 				style_text = "background_color:";
@@ -134,23 +140,7 @@ namespace bsb
 			default:
 				break;
 			}
-
-			style_text += value;
-			style_text += ";";
-
-			all_styles = std::regex_replace(all_styles, regex, "$01" + style_text);
-
+			return std::regex_replace(content, regex, "$01" + style_text + style_t.second + ";");
 		}
-
-		inline std::string background_color_style()
-		{
-
-		}
-
-		inline std::string color_style()
-		{
-			return "color:"
-		}
-
 	}
 }
