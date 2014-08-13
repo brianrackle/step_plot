@@ -68,6 +68,7 @@
     <ClInclude Include="gradient.hpp" />
     <ClInclude Include="markdown.hpp" />
     <ClInclude Include="range_map.hpp" />
+    <ClInclude Include="range_map_test.hpp" />
     <ClInclude Include="time_it.hpp" />
     <ClInclude Include="time_it_test.hpp" />
   </ItemGroup>

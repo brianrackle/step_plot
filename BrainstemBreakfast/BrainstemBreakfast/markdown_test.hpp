@@ -14,10 +14,9 @@ namespace bsb
 			ostream << table_header("llrr", "Word 1", "Word 2", "Word 3", "Word 4")
 				<< table_row("hi", "how", "are", "you")
 				<< table_row("I", "am", "fine", 
-				span("thanks",
-				style_type(style_enum::bg_color, rgb_to_hex(0, 0, 0)),
-				style_type(style_enum::color, rgb_to_hex(255, 255, 255))).c_str()
-				);
+				span("thanks", 
+				get_style(style_enum::bg_color, rgb_to_hex(0, 0, 0)).c_str(),
+				get_style(style_enum::color, rgb_to_hex(255, 255, 255)).c_str()).c_str());
 		}
 	}
 }
