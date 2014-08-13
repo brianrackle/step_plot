@@ -93,26 +93,17 @@ namespace bsb
 
 		enum class style_enum
 		{
-			background_color = 0,
+			bg_color = 0,
 			color
 		};
 
 		using style_type = std::pair < const style_enum, const std::string >;
 
-		template<class ... Types>
-		inline std::string span(const char * content, const style_type first_style, const Types ... rest_style)
-		{
-			return std::string(" <span ") +
-				populate_style(create_style(), first_style, rest_style...) + ">" +
-				content +
-				"</span> ";
-		}
-
 		//converts rgb to hex
 		//http://stackoverflow.com/questions/14375156/how-to-convert-a-rgb-color-value-to-an-hexadecimal-value-in-c
 		inline std::string rgb_to_hex(const unsigned char r, const unsigned char g, const unsigned char b)
 		{
-			return "0x" + uchar_to_hex(r) + uchar_to_hex(g) + uchar_to_hex(b);
+			return "#" + uchar_to_hex(r) + uchar_to_hex(g) + uchar_to_hex(b);
 		}
 
 		inline std::string create_style()
@@ -124,7 +115,7 @@ namespace bsb
 		template <class ... T>
 		inline std::string populate_style(const char * content, const style_type first_style_t, const T ... rest_style_t)
 		{
-			populate_style(populate_style(content, first_style_t), rest_style_t...);
+			return populate_style(populate_style(content, first_style_t).c_str(), rest_style_t...);
 		}
 
 		//populates style attribute (content) with styles
@@ -135,8 +126,8 @@ namespace bsb
 			std::string style_text;
 			switch (style_t.first)
 			{
-			case style_enum::background_color:
-				style_text = "background_color:";
+			case style_enum::bg_color:
+				style_text = "background-color:";
 				break;
 			case style_enum::color:
 				style_text = "color:";
@@ -144,7 +135,24 @@ namespace bsb
 			default:
 				break;
 			}
-			return std::regex_replace(content, regex, "$01" + style_text + style_t.second + ";");
+			return std::regex_replace(content, regex, "\"$01" + style_text + style_t.second + ";\"");
+		}
+
+		template<class ... Types>
+		inline std::string span(const char * content, const style_type first_style, const Types ... rest_style)
+		{
+			return " <span " +
+				populate_style(create_style().c_str(), first_style, rest_style...) + ">" +
+				content +
+				"</span> ";
+		}
+
+		inline std::string span(const char * content, const style_type first_style)
+		{
+			return " <span " +
+				populate_style(create_style().c_str(), first_style) + ">" +
+				content +
+				"</span> ";
 		}
 	}
 }

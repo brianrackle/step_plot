@@ -14,7 +14,7 @@ namespace bsb
 			ostream << heading(2, "time_it");
 			ostream << heading(4, __FILE__);
 			auto result = time_it < std::chrono::milliseconds >
-				([]{ for (size_t i = 0; i < 100000 * 1000; ++i) std::pow(i, 2); });
+				([]{ for (size_t i = 0; i < 1000 * 1000; ++i) std::pow(i, 2); });
 			ostream << "milliseconds: " + std::to_string(result.count());
 		}
 	}
