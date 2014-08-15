@@ -13,8 +13,8 @@ namespace bsb
 			const auto && tHLF = [](_tT v){ return v / 2; };
 
 			auto scaledOffsetResult =
-				((tHLF(highestTo) - tHLF(lowestTo)) * ((fHLF(value) - fHLF(lowestFrom))
-				/ (fHLF(highestFrom) - fHLF(lowestFrom))));
+				((tHLF(highestTo) - tHLF(lowestTo)) * 
+				((fHLF(value) - fHLF(lowestFrom)) / (fHLF(highestFrom) - fHLF(lowestFrom))));
 
 			return (_tT)(scaledOffsetResult + lowestTo + scaledOffsetResult); //seperated to prevent overflow
 		}
