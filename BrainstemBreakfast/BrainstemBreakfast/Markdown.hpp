@@ -9,13 +9,15 @@ namespace bsb
 namespace markdown
 {
 #pragma region Markdown
-	//should use char_type, and return basic_string<char_type>
+
 	//create markdown table header
 	template<class _FT, class _NT, class ... _RT>
 	inline std::string table_header(const _FT format, const _NT first_name, const _RT ... rest_name)
 	{
 		static_assert(std::is_constructible<std::string, _FT>::value, "format type '_FT' must be a string constructor parameter");
 		static_assert(std::is_constructible<std::string, _NT>::value, "format type '_NT' must be a string constructor parameter");
+		//if string type _FT::value_type t;
+		//prevent template types from being different value_types
 
 		return std::string("| ") + first_name + " " + table_header(format, rest_name...);
 	}
