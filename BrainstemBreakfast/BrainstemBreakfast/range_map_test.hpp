@@ -21,6 +21,11 @@ namespace range_map
 	template <class S>
 	inline void test(S & ostream)
 	{
+		using namespace markdown;
+
+		ostream << heading(2, "time_it");
+		ostream << heading(4, __FILE__);
+
 		range<int> r0(-100, 0);
 		range<int> r1(100, 200);
 
@@ -28,7 +33,6 @@ namespace range_map
 		range<double> r3(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max());
 
 		//markdown table
-		using namespace markdown;
 		ostream << table_header("lrlrrr", "R1 Min", "R1 Max", "R2 Min", "R2 Max", "Value", "Scaled Value")
 			<< table_row(r0.ls, r0.hs, r1.ls, r1.hs, std::to_string(-100), std::to_string(scale_value(-100, r0.low, r0.high, r1.low, r1.high)))
 			<< table_row(r2.ls, r2.hs, r3.ls, r3.hs, r2.hs, std::to_string(scale_value(r2.high, r2.low, r2.high, r3.low, r3.high)))
