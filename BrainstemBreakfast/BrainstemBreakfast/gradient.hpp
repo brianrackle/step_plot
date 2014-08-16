@@ -18,7 +18,12 @@ namespace gradient
 	//single value monochrome gradient
 	//multi-value gradient
 
+	rgb gradient_value(const double value);
+	{
+		//divide space by 3
 
-	rgb gradient_value();
+		double r_range = 1 / 3;
+		double g_range = 
+	}
 }
 }

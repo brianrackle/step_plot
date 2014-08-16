@@ -6,21 +6,6 @@ namespace bsb
 {
 namespace range_map
 {
-	template <class T>
-	class range
-	{
-	public:
-		//functions for scientific notation
-		//convert using stringstream
-		//http ://stackoverflow.com/questions/6010838/how-to-keep-doubles-from-converting-to-scientific-notation-when-using-and-string
-		range(T l, T h) : low(l), high(h), ls(std::to_string(l)), hs(std::to_string(h)){}
-
-		T low;
-		T high;
-		std::string ls;
-		std::string hs;
-	};
-
 	template <class S>
 	inline void test(S & ostream)
 	{
