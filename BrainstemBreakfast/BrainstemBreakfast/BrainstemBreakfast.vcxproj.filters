@@ -36,6 +36,12 @@
     <ClInclude Include="shelp.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="shelp_test.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gradient_test.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

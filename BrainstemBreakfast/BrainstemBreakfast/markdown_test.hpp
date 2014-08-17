@@ -1,6 +1,6 @@
 #pragma once
 #include <fstream>
-#include "Markdown.hpp"
+#include "markdown.hpp"
 
 namespace bsb
 {
