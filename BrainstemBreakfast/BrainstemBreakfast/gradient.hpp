@@ -19,8 +19,9 @@ namespace gradient
 	{
 		const uint8_t regions = 6;
 		auto max_rgb = std::numeric_limits<rgb::value_type>::max();
+		double region_map = value * regions; //value scaled to regions
 		double region;
-		auto subregion_value = (rgb::value_type)(std::modf(value * 10, &region) * max_rgb);
+		auto subregion_value = (rgb::value_type)(std::modf(region_map, &region) * max_rgb);
 		auto region_value = (rgb::value_type)region; 
 
 		rgb gradient{ 0, 0, 0 };
