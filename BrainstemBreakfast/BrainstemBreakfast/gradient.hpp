@@ -1,6 +1,7 @@
 #pragma once
 #include <cmath>
 #include <limits>
+#include <cstdint>
 
 namespace bsb
 {
@@ -9,18 +10,18 @@ namespace gradient
 	class rgb
 	{
 	public:
-		using value_type = unsigned char;
+		using value_type = uint8_t;
 		value_type r, g, b;
 	};
 
 	//rainbow gradient
 	inline rgb gradient_value(const double value)
 	{
-		const unsigned char regions = 6;
+		const uint8_t regions = 6;
 		auto max_rgb = std::numeric_limits<rgb::value_type>::max();
 		double region;
 		auto subregion_value = (rgb::value_type)(std::modf(value * 10, &region) * max_rgb);
-		auto region_value = (rgb::value_type)region;
+		auto region_value = (rgb::value_type)region; 
 
 		rgb gradient{ 0, 0, 0 };
 		switch (region_value)

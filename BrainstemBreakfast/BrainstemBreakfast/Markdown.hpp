@@ -3,6 +3,7 @@
 #include <string>
 #include <cstdlib>
 #include <type_traits>
+#include <cstdint>
 #include "shelp.hpp"
 
 namespace bsb
@@ -72,7 +73,7 @@ namespace markdown
 
 	//create markdown heading
 	template <class _NT>
-	inline std::string heading(const unsigned char level, const _NT name)
+	inline std::string heading(const uint8_t level, const _NT name)
 	{
 		static_assert(std::is_constructible<std::string, _NT>::value, "format type '_NT' must be a string constructor parameter");
 
@@ -125,7 +126,7 @@ namespace markdown
 	static std::string color("color:");
 
 	//converts rgb to hex
-	inline std::string rgb_to_hex(const unsigned char r, const unsigned char g, const unsigned char b)
+	inline std::string rgb_to_hex(const uint8_t r, const uint8_t g, const uint8_t b)
 	{
 		return "#" + shelp::to_sh(r) + shelp::to_sh(g) + shelp::to_sh(b);
 	}

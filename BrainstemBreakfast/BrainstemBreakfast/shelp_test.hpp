@@ -17,7 +17,7 @@ namespace shelp
 
 		double value = 123.456789;
 		ostream << table_header("lll", "fixed", "scientific", "hex")
-			<< table_row(to_sf(value), to_ss(value), to_sh(0));
+			<< table_row(to_sf(255), to_ss(255), to_sh(255));
 	}
 }
 }

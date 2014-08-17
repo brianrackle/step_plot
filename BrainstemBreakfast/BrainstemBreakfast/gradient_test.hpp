@@ -17,7 +17,7 @@ namespace gradient
 		{
 			double v = (double)i / 100.0;
 			rgb clr = gradient_value(v);
-			ostream << span("", bg_color + rgb_to_hex(clr.r, clr.g, clr.b)) << "\n";
+			ostream << span("value", bg_color + rgb_to_hex(clr.r, clr.g, clr.b)) << "\n";
 		}
 	}
 }

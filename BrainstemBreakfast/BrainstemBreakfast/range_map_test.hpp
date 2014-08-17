@@ -13,7 +13,7 @@ namespace range_map
 		using namespace markdown;
 		using namespace shelp;
 
-		ostream << heading(2, "time_it");
+		ostream << heading(2, "range_map");
 		ostream << heading(4, __FILE__);
 
 		range<int> r0(-100, 0);
