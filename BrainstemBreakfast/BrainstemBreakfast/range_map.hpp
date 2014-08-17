@@ -1,6 +1,5 @@
 #pragma once
 #include <limits>
-#include <sstream>
 
 namespace bsb
 {
@@ -10,30 +9,11 @@ namespace range_map
 	class range
 	{
 	public:
-		range(T l, T h) : low(l), high(h), ls(std::to_string(l)), hs(std::to_string(h)){}
+		range(T l, T h) : low(l), high(h){}
 
 		T low;
 		T high;
-		std::string ls;
-		std::string hs;
 	};
-
-	template <class _VT>
-	std::string to_ss(const _VT value, const std::streamsize precision = 7)
-	{
-		std::stringstream stream;
-		stream.precision(precision);
-		stream << std::scientific << value;
-		return stream.str();
-	}
-
-	template <class _VT>
-	std::string to_sh(const _VT value)
-	{
-		std::stringstream stream;
-		stream << std::hex << value;
-		return stream.str();
-	}
 
 	template <class _fT, class _tT>
 	_tT scale_value(_fT value, _fT lowestFrom, _fT highestFrom, _tT lowestTo, _tT highestTo)

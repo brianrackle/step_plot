@@ -3,6 +3,7 @@
 #include <string>
 #include <cstdlib>
 #include <type_traits>
+#include "shelp.hpp"
 
 namespace bsb
 {
@@ -123,18 +124,10 @@ namespace markdown
 	static std::string bg_color("background-color:");
 	static std::string color("color:");
 
-	//converts unsigned char to ascii
-	inline std::string uchar_to_hex(const unsigned char c)
-	{
-		char buff[10];
-		_itoa_s(c, buff, 16);
-		return buff;
-	}
-
 	//converts rgb to hex
 	inline std::string rgb_to_hex(const unsigned char r, const unsigned char g, const unsigned char b)
 	{
-		return "#" + uchar_to_hex(r) + uchar_to_hex(g) + uchar_to_hex(b);
+		return "#" + shelp::to_sh(r) + shelp::to_sh(g) + shelp::to_sh(b);
 	}
 
 	//creates an html style attribute
