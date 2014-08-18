@@ -7,6 +7,16 @@ namespace bsb
 {
 namespace range_map
 {
+	template <class T>
+	class range
+	{
+	public:
+		range(T l, T h) : low(l), high(h){}
+
+		T low;
+		T high;
+	};
+
 	template <class S>
 	inline void test(S & ostream)
 	{
