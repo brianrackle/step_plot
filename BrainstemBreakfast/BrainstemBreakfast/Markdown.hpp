@@ -27,7 +27,7 @@ namespace markdown
 	class = typename std::enable_if<std::is_constructible<std::string, _NT>::value>::type>
 	inline std::string table_header(const _FT format, const _NT name)
 	{
-		std::string output = std::string("| ") + name + "|\n";
+		std::string output = std::string("| ") + name + " |\n";
 
 		for (const auto c : std::string(format))
 		{
@@ -46,7 +46,7 @@ namespace markdown
 				break;
 			}
 		}
-		return output + "|" + "\n";
+		return output + " |" + "\n";
 	}
 
 	//create markdown table row
