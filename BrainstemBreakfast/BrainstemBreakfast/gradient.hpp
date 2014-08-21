@@ -2,6 +2,7 @@
 #include <cmath>
 #include <limits>
 #include <cstdint>
+#include "range_map.hpp"
 
 namespace bsb
 {
@@ -59,6 +60,16 @@ namespace gradient
 		};
 		
 		return gradient;
+	}
+
+	//gradient between two colors
+	inline rgb gradient_value(const double value, const rgb & from_color, const rgb & to_color)
+	{
+		using namespace range_map;
+		return {
+			scale_value(value, 0.0, 1.0, from_color.r, to_color.r),
+			scale_value(value, 0.0, 1.0, from_color.g, to_color.g),
+			scale_value(value, 0.0, 1.0, from_color.b, to_color.b) };
 	}
 }
 }

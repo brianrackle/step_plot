@@ -10,7 +10,7 @@ namespace range_map
 	template <class _FT, class _TT,
 	class = typename std::enable_if<std::is_arithmetic<_FT>::value>::type,
 	class = typename std::enable_if<std::is_arithmetic<_TT>::value>::type>
-	_TT scale_value(_FT value, _FT lowestFrom, _FT highestFrom, _TT lowestTo, _TT highestTo)
+	_TT scale_value(const _FT value, const _FT lowestFrom, const _FT highestFrom, const _TT lowestTo, const _TT highestTo)
 	{
 		//scale by half to account for negative and positive range being too large to represent
 		const auto && fHLF = [](_FT v){ return v / 2; };

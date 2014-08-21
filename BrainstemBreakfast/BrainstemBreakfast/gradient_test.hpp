@@ -13,11 +13,19 @@ namespace gradient
 
 		ostream << heading(2, "gradient");
 		ostream << heading(4, __FILE__);
-		for (int i = 0; i < 10; ++i)
+
+		ostream << table_header("cc", "Rainbow", "Transition");
+		rgb color0{ 255, 0, 0 };
+		rgb color1{ 0, 0, 0};
+		for (int i = 0; i <= 100; ++i)
 		{
-			double v = (double)i / 10.0;
-			rgb clr = gradient_value(v);
-			ostream << span("value", bg_color + rgb_to_hex(clr.r, clr.g, clr.b)) << "\n";
+			double v = (double)i / 100.0;
+			auto make_cell = [](std::string clr)->std::string
+			{return span(clr, color + "#ffffff", bg_color + clr); };
+
+			ostream << table_row(
+				make_cell(to_hex(gradient_value(v))),
+				make_cell(to_hex(gradient_value(v, color0, color1))));
 		}
 	}
 }

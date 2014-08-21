@@ -5,6 +5,7 @@
 #include <type_traits>
 #include <cstdint>
 #include "shelp.hpp"
+#include "gradient.hpp"
 
 namespace bsb
 {
@@ -115,9 +116,9 @@ namespace markdown
 	static std::string color("color:");
 
 	//converts rgb to hex
-	inline std::string rgb_to_hex(const uint8_t r, const uint8_t g, const uint8_t b)
+	inline std::string to_hex(const gradient::rgb color)
 	{
-		return "#" + shelp::to_sh(r) + shelp::to_sh(g) + shelp::to_sh(b);
+		return "#" + shelp::to_sh(color.r) + shelp::to_sh(color.g) + shelp::to_sh(color.b);
 	}
 
 	//creates an html style attribute
