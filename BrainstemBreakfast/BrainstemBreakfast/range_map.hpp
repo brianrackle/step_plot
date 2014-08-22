@@ -12,6 +12,11 @@ namespace range_map
 	class = typename std::enable_if<std::is_arithmetic<_TT>::value>::type>
 	_TT scale_value(const _FT value, const _FT lowestFrom, const _FT highestFrom, const _TT lowestTo, const _TT highestTo)
 	{
+		if (value <= lowestFrom)
+			return lowestTo;
+		if (value >= highestFrom)
+			return highestTo;
+
 		//scale by half to account for negative and positive range being too large to represent
 		const auto && fHLF = [](_FT v){ return v / 2; };
 		const auto && tHLF = [](_TT v){ return v / 2; };
@@ -22,5 +27,7 @@ namespace range_map
 
 		return (_TT)(scaledOffsetResult + lowestTo + scaledOffsetResult); //seperated to prevent overflow
 	}
+
+	//create wrapping range which wraps past highest
 }
 }

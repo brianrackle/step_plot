@@ -22,7 +22,7 @@ namespace gradient
 		auto max_rgb = std::numeric_limits<rgb::value_type>::max();
 		double region;
 		auto subregion_value = (rgb::value_type)(std::modf(value * regions, &region) * max_rgb);
-		auto region_value = (rgb::value_type)region; 
+		auto region_value = (rgb::value_type)region % 6; 
 
 		rgb gradient{ 0, 0, 0 };
 		switch (region_value)

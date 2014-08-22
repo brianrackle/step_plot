@@ -17,7 +17,7 @@ namespace gradient
 		ostream << table_header("cc", "Rainbow", "Transition");
 		rgb color0{ 255, 0, 0 };
 		rgb color1{ 0, 0, 0};
-		for (int i = 0; i <= 100; ++i)
+		for (int i = 0; i <= 101; ++i)
 		{
 			double v = (double)i / 100.0;
 			auto make_cell = [](std::string clr)->std::string
