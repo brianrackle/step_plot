@@ -8,9 +8,8 @@ namespace bsb
 {
 namespace gradient
 {
-	class rgb
+	struct rgb
 	{
-	public:
 		using value_type = uint8_t;
 		value_type r, g, b;
 	};
