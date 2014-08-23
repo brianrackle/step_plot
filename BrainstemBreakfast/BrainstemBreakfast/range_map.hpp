@@ -28,6 +28,21 @@ namespace range_map
 		return (_TT)(scaledOffsetResult + lowestTo + scaledOffsetResult); //seperated to prevent overflow
 	}
 
-	//create wrapping range which wraps past highest
+	//scales 'value' from the range 0.0/1.0 to the range 'lowestTo'/'highestTo'
+	template <class _TT,
+	class = typename std::enable_if<std::is_arithmetic<_TT>::value>::type>
+		_TT scale_value(const double_t value, const _TT lowestTo, const _TT highestTo)
+	{
+		if (value <= 0.0)
+			return lowestTo;
+		if (value >= 1.0)
+			return highestTo;
+
+		//scale by half to account for negative and positive range being too large to represent
+		const auto && tHLF = [](_TT v){ return v / 2; };
+
+		auto scaledOffsetResult = (tHLF(highestTo) - tHLF(lowestTo)) * value;
+		return (_TT)(scaledOffsetResult + lowestTo + scaledOffsetResult); //seperated to prevent overflow
+	}
 }
 }
