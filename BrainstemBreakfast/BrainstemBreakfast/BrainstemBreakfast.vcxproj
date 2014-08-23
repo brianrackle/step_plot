@@ -65,19 +65,39 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="gradient.hpp" />
-    <ClInclude Include="gradient_test.hpp" />
-    <ClInclude Include="markdown.hpp" />
-    <ClInclude Include="range_map.hpp" />
-    <ClInclude Include="range_map_test.hpp" />
-    <ClInclude Include="shelp.hpp" />
-    <ClInclude Include="shelp_test.hpp" />
-    <ClInclude Include="time_it.hpp" />
-    <ClInclude Include="time_it_test.hpp" />
+    <ClInclude Include="gradient.hpp">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="gradient_test.hpp">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="markdown.hpp">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="range_map.hpp">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="range_map_test.hpp">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="shelp.hpp">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="shelp_test.hpp">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="time_it.hpp">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="time_it_test.hpp">
+      <FileType>CppCode</FileType>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="markdown_test.hpp" />
+    <ClCompile Include="markdown_test.hpp">
+      <FileType>CppCode</FileType>
+    </ClCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
