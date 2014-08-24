@@ -23,7 +23,7 @@ namespace range_map
 
 		auto scaledOffsetResult =
 			(tHLF(highestTo) - tHLF(lowestTo)) * 
-			long double((fHLF(value) - fHLF(lowestFrom)) / long double(fHLF(highestFrom) - fHLF(lowestFrom)));
+			((fHLF(value) - fHLF(lowestFrom)) / long double(fHLF(highestFrom) - fHLF(lowestFrom)));
 
 		return (_TT)(scaledOffsetResult + lowestTo + scaledOffsetResult); //seperated to prevent overflow
 	}
