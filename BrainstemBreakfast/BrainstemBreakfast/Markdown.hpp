@@ -154,7 +154,7 @@ namespace markdown
 		return "<span " +
 			populate_style(create_style().c_str(), first_style, rest_style...) + ">" +
 			content +
-			"</span> ";
+			"</span>";
 	}
 		
 	//creates an html span element and sets the style attribute
@@ -163,10 +163,10 @@ namespace markdown
 	class = typename std::enable_if<std::is_constructible<std::string, _ST>::value>::type>
 	inline std::string span(const _CT content, const _ST first_style)
 	{
-		return " <span " +
+		return "<span " +
 			populate_style(create_style().c_str(), first_style) + ">" +
 			content +
-			"</span> ";
+			"</span>";
 	}
 #pragma endregion
 }

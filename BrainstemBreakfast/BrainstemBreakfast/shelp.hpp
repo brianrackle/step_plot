@@ -35,5 +35,13 @@ namespace shelp
 		stream << std::fixed << value;
 		return stream.str();
 	}
+
+	template <class _VT>
+	inline std::string to_str(const _VT value)
+	{
+		std::stringstream stream;
+		stream << value;
+		return stream.str();
+	}
 }
 }
