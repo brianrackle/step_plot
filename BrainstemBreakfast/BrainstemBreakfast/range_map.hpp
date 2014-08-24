@@ -18,13 +18,13 @@ namespace range_map
 			return highestTo;
 
 		//scale by half to account for negative and positive range being too large to represent
-		const auto && fHLF = [](_FT v){ return v / 2; };
-		const auto && tHLF = [](_TT v){ return v / 2; };
+		const auto && fHLF = [](_FT v){ return v / long double(2.0); };
+		const auto && tHLF = [](_TT v){ return v / long double(2.0); };
 
-		auto scaledOffsetResult =
-			(tHLF(highestTo) - tHLF(lowestTo)) * 
-			((fHLF(value) - fHLF(lowestFrom)) / long double(fHLF(highestFrom) - fHLF(lowestFrom)));
-
+		auto delta_to = tHLF(highestTo) - tHLF(lowestTo);
+		auto delta_from = fHLF(highestFrom) - fHLF(lowestFrom);
+		auto delta_value = fHLF(value) - fHLF(lowestFrom);
+		auto scaledOffsetResult = delta_to * (delta_value / delta_from);
 		return (_TT)(scaledOffsetResult + lowestTo + scaledOffsetResult); //seperated to prevent overflow
 	}
 
@@ -39,7 +39,7 @@ namespace range_map
 			return highestTo;
 
 		//scale by half to account for negative and positive range being too large to represent
-		const auto && tHLF = [](_TT v){ return v / 2; };
+		const auto && tHLF = [](_TT v){ return v / long double(2.0); };
 
 		auto scaledOffsetResult = (tHLF(highestTo) - tHLF(lowestTo)) * value;
 		return (_TT)(scaledOffsetResult + lowestTo + scaledOffsetResult); //seperated to prevent overflow

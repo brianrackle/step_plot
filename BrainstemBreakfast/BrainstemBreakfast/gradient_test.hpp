@@ -8,17 +8,17 @@ namespace bsb
 {
 namespace gradient
 {
-	auto make_cell(std::string clr)->std::string
+	std::string make_cell(std::string clr)
 	{
 		return markdown::span(clr, markdown::color + "#ffffff", markdown::bg_color + clr);
 	}
 
-	auto hex_grad(const double_t v, const rgb t, const rgb f)->std::string
+	std::string hex_grad(const double_t v, const rgb t, const rgb f)
 	{
 		return markdown::to_hex(gradient_value(v, t, f));
 	};
 
-	auto gradient_string(std::string str, const rgb from_color, const rgb to_color)->std::string
+	std::string gradient_string(std::string str, const rgb from_color, const rgb to_color)
 	{
 		std::string result;
 		auto size = str.size();
@@ -28,6 +28,25 @@ namespace gradient
 			auto v = range_map::scale_value(i, str_t(0), str.size(), 0.0, 1.0);
 			result += markdown::span(shelp::to_str(str[i]), markdown::color +
 				hex_grad(v, from_color, to_color));
+		}
+		return result;
+	};
+
+	std::string hex_grad(const double_t v)
+	{
+		return markdown::to_hex(gradient_value(v));
+	};
+
+	std::string gradient_string(std::string str)
+	{
+		std::string result;
+		auto size = str.size();
+		using str_t = decltype(str.size());
+		for (str_t i = 0; i < str.size(); ++i)
+		{
+			auto v = range_map::scale_value(i, str_t(0), str.size(), 0.0, 1.0);
+			result += markdown::span(shelp::to_str(str[i]), markdown::color +
+				hex_grad(v));
 		}
 		return result;
 	};
@@ -54,6 +73,7 @@ namespace gradient
 		}
 
 		ostream << pgf(gradient_string(std::string("This is a test of 'gradient_string'. Each character in the string is given a unique value in the gradient."), { 42, 163, 90 }, { 207, 74, 33 }));
+		ostream << gradient_string(std::string("This is a test of 'gradient_string'. Each character in the string is given a unique value in the gradient."));
 	}
 }
 }
