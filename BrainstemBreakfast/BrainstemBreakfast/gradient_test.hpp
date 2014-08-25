@@ -10,7 +10,7 @@ namespace gradient
 {
 	std::string make_cell(std::string clr)
 	{
-		return markdown::span(clr, markdown::color + "#ffffff", markdown::bg_color + clr);
+		return markdown::span(clr, "color:#ffffff", "background-color:" + clr);
 	}
 
 	std::string hex_grad(const double_t v, const rgb t, const rgb f)
@@ -26,7 +26,7 @@ namespace gradient
 		for (str_t i = 0; i < str.size(); ++i)
 		{
 			auto v = range_map::scale_value(i, str_t(0), str.size(), 0.0, 1.0);
-			result += markdown::span(shelp::to_str(str[i]), markdown::color +
+			result += markdown::span(shelp::to_str(str[i]), "color:" +
 				hex_grad(v, from_color, to_color));
 		}
 		return result;
@@ -45,7 +45,7 @@ namespace gradient
 		for (str_t i = 0; i < str.size(); ++i)
 		{
 			auto v = range_map::scale_value(i, str_t(0), str.size(), 0.0, 1.0);
-			result += markdown::span(shelp::to_str(str[i]), markdown::color +
+			result += markdown::span(shelp::to_str(str[i]), "color:" +
 				hex_grad(v));
 		}
 		return result;
