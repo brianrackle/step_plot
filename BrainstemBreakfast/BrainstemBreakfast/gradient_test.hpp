@@ -44,7 +44,7 @@ namespace gradient
 		using str_t = decltype(str.size());
 		for (str_t i = 0; i < str.size(); ++i)
 		{
-			auto v = range_map::scale_value(i, str_t(0), str.size(), 0.0, 1.0);
+			auto v = range_map::value_scale(i, str_t(0), str.size());
 			result += markdown::span(shelp::to_str(str[i]), "color:" +
 				hex_grad(v));
 		}
