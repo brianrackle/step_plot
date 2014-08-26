@@ -9,8 +9,6 @@ namespace markdown
 	template <class S>
 	inline void test(S & ostream)
 	{
-		using namespace std::literals::string_literals;
-
 		ostream << heading(2, "markdown");
 		ostream << heading(4, __FILE__);
 		ostream << table_header("llrr", "Word 1", "Word 2", "Word 3", "Word 4")

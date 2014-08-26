@@ -15,11 +15,11 @@ namespace gradient
 	};
 
 	//rainbow gradient
-	inline rgb gradient_value(const double_t value)
+	inline rgb gradient_value(const long double value)
 	{
 		const uint8_t regions = 6;
 		auto max_rgb = std::numeric_limits<rgb::value_type>::max();
-		double region;
+		long double region;
 		auto subregion_value = (rgb::value_type)(std::modf(value * regions, &region) * max_rgb);
 		auto region_value = (rgb::value_type)region % 6; 
 
@@ -62,7 +62,7 @@ namespace gradient
 	}
 
 	//gradient between two colors
-	inline rgb gradient_value(const double_t value, const rgb & from_color, const rgb & to_color)
+	inline rgb gradient_value(const long double value, const rgb & from_color, const rgb & to_color)
 	{
 		using namespace range_map;
 		return {

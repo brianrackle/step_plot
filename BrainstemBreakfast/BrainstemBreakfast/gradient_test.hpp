@@ -13,7 +13,7 @@ namespace gradient
 		return markdown::span(clr, "color:#ffffff", "background-color:" + clr);
 	}
 
-	std::string hex_grad(const double_t v, const rgb t, const rgb f)
+	std::string hex_grad(const long double v, const rgb t, const rgb f)
 	{
 		return markdown::to_hex(gradient_value(v, t, f));
 	};
@@ -32,7 +32,7 @@ namespace gradient
 		return result;
 	};
 
-	std::string hex_grad(const double_t v)
+	std::string hex_grad(const long double v)
 	{
 		return markdown::to_hex(gradient_value(v));
 	};
@@ -62,7 +62,7 @@ namespace gradient
 		ostream << table_header("ccccc", "Rainbow", "Transition1", "Transition2", "Transition3", "Transition4");
 		for (int i = 0; i <= 10; ++i)
 		{
-			double_t v = (double_t)i / 10.0;
+			long double v = (long double)i / 10.0;
 
 			ostream << table_row(
 				make_cell(to_hex(gradient_value(v))),
