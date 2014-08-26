@@ -28,10 +28,19 @@ namespace range_map
 
 		range<int> r2{ std::numeric_limits<int>::lowest(), std::numeric_limits<int>::max() };
 		range<double> r3{ std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max() };
-		ostream << table_header("lrlrrr", "Value", "R1 Min", "R1 Max", "R2 Min", "R2 Max", "Return Value")
-			<< table_row(to_ss(400), to_ss(r0.low), to_ss(r0.high), to_ss(r1.low), to_ss(r1.high), to_ss(scale_value(400, r0.low, r0.high, r1.low, r1.high)))
-			<< table_row(to_ss(r2.high), to_ss(r2.low), to_ss(r2.high), to_ss(r3.low), to_ss(r3.high), to_ss(scale_value(r2.high, r2.low, r2.high, r3.low, r3.high)))
-			<< table_row(to_ss(400), to_ss(r0.low), to_ss(r0.high), to_ss(r2.low), to_ss(r2.high), to_ss(scale_value(400, r0.low, r0.high, r2.low, r2.high)));
+
+		//breaking visual studio 14 CTP3
+		auto row_results = [](auto value, auto r1_min, auto r1_max, auto r2_min, auto r2_max)->std::string
+		{
+			return table_row(to_ss(value), to_ss(r1_min), to_ss(r1_max), to_ss(r2_min), to_ss(r2_max),
+				to_ss(scale_value(value, r1_min, r1_max, r2_min, r2_max)));
+		};
+
+		ostream << table_header("llrlrr", "Value", "R1 Min", "R1 Max", "R2 Min", "R2 Max", "Return Value")
+			<< row_results(400, r0.low, r0.high, r1.low, r1.high);
+			//<< row_results(r2.high, r2.low, r2.high, r3.low, r3.high)
+			//<< row_results(400, r0.low, r0.high, r2.low, r2.high)
+			//<< row_results(127, 0, 255, 0.0, 1.0);
 	}
 }
 }

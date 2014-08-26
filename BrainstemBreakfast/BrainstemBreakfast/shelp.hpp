@@ -6,6 +6,7 @@ namespace bsb
 {
 namespace shelp
 {
+	//creates a string using scientific notation
 	template <class _VT,
 	class = typename std::enable_if<std::is_arithmetic<_VT>::value>::type>
 	inline std::string to_ss(const _VT value, const std::streamsize precision = 5)
@@ -16,6 +17,7 @@ namespace shelp
 		return stream.str();
 	}
 
+	//creates a string using hex notation
 	template <class _VT,
 	class = typename std::enable_if<std::is_arithmetic<_VT>::value>::type>
 	inline std::string to_sh(const _VT value)
@@ -26,6 +28,7 @@ namespace shelp
 		return stream.str();
 	}
 
+	//creates a string using fixed notation
 	template <class _VT,
 	class = typename std::enable_if<std::is_arithmetic<_VT>::value>::type>
 	inline std::string to_sf(const _VT value, const std::streamsize precision = 5)
@@ -36,6 +39,7 @@ namespace shelp
 		return stream.str();
 	}
 
+	//creates a string from value
 	template <class _VT>
 	inline std::string to_str(const _VT value)
 	{
