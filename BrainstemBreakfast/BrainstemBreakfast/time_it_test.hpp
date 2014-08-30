@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _0a479ea3eab34d7d94990938f9399c1a
+#define  _0a479ea3eab34d7d94990938f9399c1a
+
 #include "time_it.hpp"
 #include "markdown.hpp"
 #include <string>
@@ -19,3 +21,4 @@ namespace time_it
 	}
 }
 }
+#endif

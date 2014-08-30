@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _bcad905733e04e498c855289d46cff8a
+#define _bcad905733e04e498c855289d46cff8a
+
 #include "range_map.hpp"
 #include "markdown.hpp"
 #include "shelp.hpp"
@@ -46,3 +48,4 @@ namespace range_map
 	}
 }
 }
+#endif

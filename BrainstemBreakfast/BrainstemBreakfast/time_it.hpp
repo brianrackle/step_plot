@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _d5b610a72fb84727a0f5213467674d3c
+#define  _d5b610a72fb84727a0f5213467674d3c
+
 #include <chrono>
 
 namespace bsb
@@ -17,3 +19,4 @@ namespace time_it
 	}
 }
 }
+#endif

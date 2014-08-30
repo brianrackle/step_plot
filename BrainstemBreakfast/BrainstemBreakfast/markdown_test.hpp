@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _53ed167418c3493a9815f316bbdf8ce9
+#define _53ed167418c3493a9815f316bbdf8ce9
+
 #include <fstream>
 #include "markdown.hpp"
 
@@ -18,3 +20,5 @@ namespace markdown
 	}
 }
 }
+
+#endif

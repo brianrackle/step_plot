@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _5fb0923aaabf4724b16bcc07b3f26b1f
+#define _5fb0923aaabf4724b16bcc07b3f26b1f
+
 #include "gradient.hpp"
 #include "markdown.hpp"
 #include "shelp.hpp"
@@ -10,7 +12,7 @@ namespace gradient
 {
 	std::string make_cell(std::string clr)
 	{
-		return markdown::span(clr, "color:#ffffff", "background-color:" + clr);
+	  return markdown::span(clr, "color:#ffffff", "background-color:" + clr);
 	}
 
 	std::string hex_grad(const long double v, const rgb t, const rgb f)
@@ -77,3 +79,4 @@ namespace gradient
 	}
 }
 }
+#endif

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _9f0413de588d4401bfccc883b6f81ad2
+#define _9f0413de588d4401bfccc883b6f81ad2
+
 #include <regex>
 #include <string>
 #include <cstdlib>
@@ -11,15 +13,6 @@ namespace bsb
 {
 namespace markdown
 {
-#pragma region Markdown
-
-	//create markdown table header
-	template<class ... _RT>
-	inline std::string table_header(const std::string format, const std::string first_name, const _RT ... rest_name)
-	{
-		return "| " + first_name + " " + table_header(format, rest_name...);
-	}
-
 	//table_header recursion base case
 	inline std::string table_header(const std::string format, const std::string name)
 	{
@@ -45,11 +38,11 @@ namespace markdown
 		return output + " |" + "\n";
 	}
 
-	//create markdown table row
-	template <class ... _RT>
-	inline std::string table_row(const std::string first_content, const _RT ... rest_content)
+	//create markdown table header
+	template<class ... _RT>
+	inline std::string table_header(const std::string format, const std::string first_name, const _RT ... rest_name)
 	{
-		return "| " + first_content + " " + table_row(rest_content...);
+		return "| " + first_name + " " + table_header(format, rest_name...);
 	}
 
 	//table_row recursion base case
@@ -58,11 +51,19 @@ namespace markdown
 		return  "| " + content + "|\n";
 	}
 
+	//create markdown table row
+	template <class ... _RT>
+	inline std::string table_row(const std::string first_content, const _RT ... rest_content)
+	{
+		return "| " + first_content + " " + table_row(rest_content...);
+	}
+
+
 	//create markdown heading
 	inline std::string heading(const uint8_t level, const std::string name)
 	{
 		std::string output;
-		for (std::remove_const_t<decltype(level)> i = 0; i < level; ++i)
+		for (std::remove_const<decltype(level)>::type i = 0; i < level; ++i)
 			output += "#";
 		return "\n" + output + " " + name + "\n";
 	}
@@ -84,8 +85,7 @@ namespace markdown
 	{
 		return "\n" + std::regex_replace("> " + content, std::regex("\n"), "$&> ") + "\n";
 	}
-#pragma endregion
-#pragma region HTML
+
 	//make a full anchor tag that supports content
 	//create an html anchor. To be paired with an anchor link
 	inline std::string anchor(const std::string name)
@@ -105,6 +105,12 @@ namespace markdown
 		return "style=\"\"";
 	}
 
+	//populate_style recursion base cas
+	inline std::string populate_style(const std::string content, const std::string style)
+	{
+		return std::regex_replace(content, std::regex("\"(.*?)\""), "\"$01" + style + ";\"");
+	}
+
 	//populates an html style attribute (content) with styles
 	template <class ... _RT>
 	inline std::string populate_style(const std::string content, const std::string first_style, const _RT ... rest_style)
@@ -112,10 +118,13 @@ namespace markdown
 		return populate_style(populate_style(content, first_style), rest_style...);
 	}
 
-	//populate_style recursion base cas
-	inline std::string populate_style(const std::string content, const std::string style)
+	//creates an html span element and sets the style attribute
+	inline std::string span(const std::string content, const std::string first_style)
 	{
-		return std::regex_replace(content, std::regex("\"(.*?)\""), "\"$01" + style + ";\"");
+		return "<span " +
+			populate_style(create_style(), first_style) + ">" +
+			content +
+			"</span>";
 	}
 
 	//creates an html span element and sets the style attributes
@@ -128,14 +137,8 @@ namespace markdown
 			"</span>";
 	}
 		
-	//creates an html span element and sets the style attribute
-	inline std::string span(const std::string content, const std::string first_style)
-	{
-		return "<span " +
-			populate_style(create_style(), first_style) + ">" +
-			content +
-			"</span>";
-	}
-#pragma endregion
+
 }
 }
+
+#endif

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _c9b3775782f94483965d7b3ca0224896 
+#define _c9b3775782f94483965d7b3ca0224896 
+
 #include <cmath>
 #include <limits>
 #include <cstdint>
@@ -72,3 +74,5 @@ namespace gradient
 	}
 }
 }
+
+#endif
