@@ -5,6 +5,8 @@
 #include <string>
 #include <functional>
 #include <iterator>
+#include <vector>
+#include <numeric>
 
 namespace bsb
 {
@@ -35,23 +37,37 @@ namespace regex_ext
 	    class STraits, class SAlloc >
   inline std::basic_string<CharT,STraits,SAlloc> 
   regex_replace_ext( const std::basic_string<CharT,STraits,SAlloc>& s,
-			    const std::basic_regex<CharT,Traits>& re,
-			    std::function<std::string (const std::string &)> fmt)
-  {
+		     const std::basic_regex<CharT,Traits>& re,
+		     std::function<std::string (const unsigned, const std::string &)> fmt)
+  {    
+    std::vector<int> smatches{-1};
+    if(re.mark_count() == 0)
+	smatches.push_back(0);
+    else
+      {
+	smatches.resize(1+re.mark_count());
+	std::iota(std::next(smatches.begin()), smatches.end(), 1); //-1, 1, 2, etc...    
+      }
+
+    unsigned smatch_count = smatches.size();
+    unsigned count = 0;
+
     std::regex_token_iterator
       <typename std::basic_string<CharT,STraits,SAlloc>::const_iterator> 
-      tbegin(s.begin(), s.end(), re, {-1,1}), tend;            
-    uint8_t count = 0;
-    uint8_t mark_count = re.mark_count() + 1;
-    //there should be two modes. One where fmt handles all submatches and one where there is a unique fmt for each submatch
-      std::basic_stringstream<CharT,STraits,SAlloc> ret_val;
-      std::for_each(tbegin, tend, [&count,&mark_count,&ret_val,&fmt]
-		  (const std::basic_string<CharT,STraits,SAlloc> & token){
-		    if(!count) 
-		      ret_val << token;
-		    else
-		      ret_val << fmt(token);
-		    count = ++count % mark_count;
+      tbegin(s.begin(), s.end(), re, smatches), tend;            
+
+    std::basic_stringstream<CharT,STraits,SAlloc> ret_val;
+    std::for_each(tbegin, tend, [&count,&smatch_count,&ret_val,&fmt]
+		  (const std::basic_string<CharT,STraits,SAlloc> & token)
+		  {
+		    if(token.size() != 0)
+		      {
+			if(!count) 
+			  ret_val << token;
+			else
+			  ret_val << fmt(count,token);
+		      }
+		    count = ++count % smatch_count;
 		  });
     return ret_val.str();
   }

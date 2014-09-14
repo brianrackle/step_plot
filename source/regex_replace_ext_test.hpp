@@ -2,6 +2,8 @@
 #define _t0236867e81948d8822283c3bbbe6a0f
 #include <map>
 #include <iostream>
+#include <vector>
+#include <string>
 #include "regex_replace_ext.hpp"
 #include "markdown.hpp"
 
@@ -18,27 +20,45 @@ namespace regex_ext
     ostream << heading(2, "regex");
     ostream << heading(4, __FILE__);
 
-    auto fmt = [](const std::string & s)->std::string
-      { 
-	const std::map<std::string,std::string> def
+    using dictionary = std::map<std::string,std::string>;
+    const std::vector<const dictionary> dict
+      {
 	{
 	  {"{Id_1}","This"},
 	  {"{Id_2}","test"},
-	  {"{Id_3}","Obama's"},
+	  {"{Id_3}","my"},
 	  {"{Id_4}","favorite"},
 	  {"{Id_5}","hotdog"}
-	};
-	const auto it = def.find(s); 
-	return it != def.cend() ? it->second : s;
+	},
+	{
+	  {"[Fill_0]","is a"},
+	  {"[Fill_1]","of"}
+	}
+      };
+
+    auto fmt0 = [&dict](const unsigned smatch, const std::string & s)->std::string
+      { 
+	return std::to_string(smatch);
+      };
+
+    auto fmt1 = [&dict](const unsigned smatch, const std::string & s)->std::string
+      {
+	auto dict_smatch = smatch - 1;
+	if(dict_smatch > dict.size()-1)
+	  return "fail";
+  
+        const auto it = dict[dict_smatch].find(s); 
+	return it != dict[dict_smatch].cend() ? it->second : s;
       };
 
     std::string test("Test");
 
-    const std::string bss("{Id_1} is a {Id_2} of {Id_3} {Id_4} {Id_5}.");
-    const std::regex re("(\\{.*?\\})");
-    auto result = regex_replace_ext(bss, re, fmt);
-    
-    std::cout << result << std::endl;
+    const std::string bss("{Id_1} [Fill_0] {Id_2} [Fill_1] {Id_3} {Id_4} {Id_5}.");
+    const std::regex re("(\\{.*?\\})|(\\[.*?\\])");
+
+    std::cout << bss << std::endl;
+    std::cout << regex_replace_ext(bss, re, fmt0) << std::endl;
+    std::cout << regex_replace_ext(bss, re, fmt1) << std::endl;
   }
 
 }
