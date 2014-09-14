@@ -4,6 +4,7 @@
 #include "range_map_test.hpp"
 #include "shelp_test.hpp"
 #include "gradient_test.hpp"
+#include "regex_replace_ext_test.hpp"
 
 int main()
 {
@@ -14,4 +15,5 @@ int main()
 	bsb::range_map::test(outfile);
 	bsb::shelp::test(outfile);
 	bsb::gradient::test(outfile);
+	bsb::regex_ext::test(outfile);
 }
