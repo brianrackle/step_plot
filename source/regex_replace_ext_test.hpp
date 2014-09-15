@@ -51,6 +51,16 @@ namespace regex_ext
 	return it != dict[dict_smatch].cend() ? it->second : s;
       };
 
+    auto fmt2 = [&dict](const std::string & s)->std::string
+      {
+	for(const auto & d : dict)
+	  {
+	    auto d_it = d.find(s);
+	    if(d_it != d.end())
+	      return d_it->second;
+	  }
+	  return s;
+      };
     std::string test("Test");
 
     const std::string bss("{Id_1} [Fill_0] {Id_2} [Fill_1] {Id_3} {Id_4} {Id_5}.");
@@ -59,6 +69,7 @@ namespace regex_ext
     std::cout << bss << std::endl;
     std::cout << regex_replace_ext(bss, re, fmt0) << std::endl;
     std::cout << regex_replace_ext(bss, re, fmt1) << std::endl;
+    std::cout << regex_replace_ext(bss, re, fmt2) << std::endl;
   }
 
 }
