@@ -7,6 +7,7 @@
 #include <iterator>
 #include <vector>
 #include <numeric>
+#include <type_traits>
 
 namespace bsb
 {
@@ -27,12 +28,12 @@ namespace regex_ext
   template< class OutputIt, class BidirIt,
 	    class Traits, class CharT >
   OutputIt regex_replace( OutputIt out, BidirIt first, BidirIt last,
-			  const std::basic_regex<CharT,Traits>& re,
+  const std::basic_regex<CharT,Traits>& re,
 			  const CharT* fmt,
 			  std::regex_constants::match_flag_type flags = 
 			  std::regex_constants::match_default );
   */
-
+  //why does s and re work but not fmt
   //Matches regex and calls fmt for replacement value.
   //fmt is passed the sub-expression index and matched string and returns the replacement value
   template< class Traits, class CharT,
@@ -40,8 +41,9 @@ namespace regex_ext
   inline std::basic_string<CharT,STraits,SAlloc> 
   regex_replace_ext( const std::basic_string<CharT,STraits,SAlloc>& s,
 		     const std::basic_regex<CharT,Traits>& re,
-		     std::function<std::string (const unsigned, const std::string &)> fmt)
-  {    
+		     typename std::common_type<std::function<std::basic_string<CharT,STraits,SAlloc> 
+		     (const unsigned, const std::basic_string<CharT,STraits,SAlloc> &)>>::type fmt)
+  {
     std::vector<int> smatches{-1};
     if(re.mark_count() == 0)
 	smatches.push_back(0);

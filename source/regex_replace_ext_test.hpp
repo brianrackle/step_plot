@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <functional>
 #include "regex_replace_ext.hpp"
 #include "markdown.hpp"
 
@@ -19,8 +20,9 @@ namespace regex_ext
     
     ostream << heading(2, "regex");
     ostream << heading(4, __FILE__);
-
+      
     using dictionary = std::map<std::string,std::string>;
+ 
     const std::vector<const dictionary> dict
       {
 	{
@@ -35,9 +37,9 @@ namespace regex_ext
 	  {"[Fill_1]","of"}
 	}
       };
-
+    
     auto fmt0 = [&dict](const unsigned smatch, const std::string & s)->std::string
-      { 
+      {
 	return std::to_string(smatch);
       };
 
