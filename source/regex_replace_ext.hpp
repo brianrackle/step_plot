@@ -41,8 +41,8 @@ namespace regex_ext
   inline std::basic_string<CharT,STraits,SAlloc> 
   regex_replace_ext( const std::basic_string<CharT,STraits,SAlloc>& s,
 		     const std::basic_regex<CharT,Traits>& re,
-		     typename std::common_type<std::function<std::basic_string<CharT,STraits,SAlloc> 
-		     (const unsigned, const std::basic_string<CharT,STraits,SAlloc> &)>>::type fmt)
+		     const typename std::common_type<std::function<std::basic_string<CharT,STraits,SAlloc> 
+		     (const unsigned, const std::basic_string<CharT,STraits,SAlloc> &)>>::type& fmt)
   {
     std::vector<int> smatches{-1};
     if(re.mark_count() == 0)
@@ -84,7 +84,8 @@ namespace regex_ext
   inline std::basic_string<CharT,STraits,SAlloc> 
   regex_replace_ext( const std::basic_string<CharT,STraits,SAlloc>& s,
 		     const std::basic_regex<CharT,Traits>& re,
-		     std::function<std::string (const std::string &)> fmt)
+		     const typename std::common_type<std::function<std::basic_string<CharT,STraits,SAlloc>
+		     (const std::basic_string<CharT,STraits,SAlloc> &)>>::type& fmt)
   {    
     std::vector<int> smatches{-1,0};
 

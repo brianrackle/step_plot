@@ -13,12 +13,11 @@ namespace bsb
 {
 namespace markdown
 {
-
   //table_header recursion base case
   inline std::string table_header(const std::string format, const std::string name)
   {
     auto output = "| " + name + " |\n";
-
+    
     for (const auto c : format)
       {
 	switch (c)
