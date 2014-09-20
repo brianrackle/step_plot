@@ -52,7 +52,7 @@ namespace regex_ext
         const auto it = dict[dict_smatch].find(s); 
 	return it != dict[dict_smatch].cend() ? it->second : s;
       };
-
+    
     auto fmt2 = [&dict](const std::string & s)->std::string
       {
 	for(const auto & d : dict)
@@ -63,6 +63,7 @@ namespace regex_ext
 	  }
 	  return s;
       };
+    
     std::string test("Test");
 
     const std::string bss("{Id_1} [Fill_0] {Id_2} [Fill_1] {Id_3} {Id_4} {Id_5}.");
