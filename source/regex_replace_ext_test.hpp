@@ -69,10 +69,10 @@ namespace regex_ext
     const std::string bss("{Id_1} [Fill_0] {Id_2} [Fill_1] {Id_3} {Id_4} {Id_5}.");
     const std::regex re("(\\{.*?\\})|(\\[.*?\\])");
 
-    std::cout << bss << std::endl;
-    std::cout << regex_replace_ext(bss, re, fmt0) << std::endl;
-    std::cout << regex_replace_ext(bss, re, fmt1) << std::endl;
-    std::cout << regex_replace_ext(bss, re, fmt2) << std::endl;
+    ostream << bss << std::endl;
+    ostream << regex_replace_ext(bss, re, fmt0) << std::endl;
+    ostream << regex_replace_ext(bss, re, fmt1) << std::endl;
+    ostream << regex_replace_ext(bss, re, fmt2) << std::endl;
   }
 
 }
