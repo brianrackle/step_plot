@@ -46,7 +46,7 @@ namespace regex_ext
 		  {
 		    if(token.size() != 0)
 		      {
-			if(!count) 
+			if(count != 0) 
 			  ret_val << token;
 			else
 			  ret_val << fmt(count,token);
@@ -80,7 +80,7 @@ namespace regex_ext
 		  (const std::basic_string<CharT,STraits,SAlloc> & token)		  {
 		    if(token.size() != 0)
 		      {
-			if(!count) 
+			if(count != 0) 
 			  ret_val << token;
 			else
 			  ret_val << fmt(token);

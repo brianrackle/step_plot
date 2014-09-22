@@ -24,19 +24,19 @@ namespace regex_ext
     using dictionary = std::map<std::string,std::string>;
  
     const std::vector<const dictionary> dict
+    {
       {
-	{
-	  {"{Id_1}","This"},
+	{"{Id_1}","This"},
 	  {"{Id_2}","test"},
-	  {"{Id_3}","my"},
-	  {"{Id_4}","favorite"},
-	  {"{Id_5}","hotdog"}
-	},
+	    {"{Id_3}","my"},
+	      {"{Id_4}","favorite"},
+		{"{Id_5}","hotdog"}
+      },
 	{
 	  {"[Fill_0]","is a"},
-	  {"[Fill_1]","of"}
+	    {"[Fill_1]","of"}
 	}
-      };
+    };
     
     auto fmt0 = [&dict](const unsigned smatch, const std::string & s)->std::string
       {
@@ -47,7 +47,7 @@ namespace regex_ext
       {
 	auto dict_smatch = smatch - 1;
 	if(dict_smatch > dict.size()-1)
-	  return "fail";
+	  return s; //more submatches than expected
   
         const auto it = dict[dict_smatch].find(s); 
 	return it != dict[dict_smatch].cend() ? it->second : s;
