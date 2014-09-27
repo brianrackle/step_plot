@@ -2,7 +2,7 @@
 ## Initialize Environment
 sudo apt-get update -y
 sudo apt-get upgrade -y
-sudo apt-get install g++ subversion cmake emacs git xdg-utils htop ncurses-dev ruby ruby-dev nodejs make -y
+sudo apt-get install -y g++ subversion cmake emacs git xdg-utils htop ncurses-dev ruby ruby-dev nodejs make default-jre default-jdk
 sudo mkdir repos
 
 ## Pull Clang and LLVM
@@ -41,5 +41,12 @@ sudo clang++ --std=c++14 --stdlib=libc++ main.cpp
 
 ## Install Jekyll
 sudo gem install jekyll --no-rdoc --no-ri
+
+## Install Graphics Drivers
+## From Ctrl-Alt-F1 with 
+sudo stop lightdm
+sudo ubuntu-drivers devices
+sudo apt-get install -y nvidia-331 
+sudo apt-get --purge remove -y xserver-xorg-video-nouveau
 
 ## All
