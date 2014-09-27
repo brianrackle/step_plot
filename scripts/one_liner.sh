@@ -48,5 +48,6 @@ sudo stop lightdm
 sudo ubuntu-drivers devices
 sudo apt-get install -y nvidia-331 
 sudo apt-get --purge remove -y xserver-xorg-video-nouveau
+sudo start lightdm
 
 ## All
