@@ -1,3 +1,4 @@
+{plots 3}
 plot \
      "line-segs.dat" index {0} title "Event" with points lc 1 ps 4 pt 3,\
      "line-segs.dat" index {1} title "Radial" with linespoints lc 2 lw 2 pt 6,\
