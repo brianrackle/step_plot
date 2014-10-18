@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <functional>
+#include <algorithm>
 #include "ncurses.h"
 #include "regex_replace_ext.hpp"
 
@@ -45,7 +46,7 @@ void stop_ncurses()
   endwin();
 }
 
-std::string file_to_string(char * file_path)
+std::string file_to_string(std::string file_path)
 {
   std::ifstream file(file_path);
   std::istreambuf_iterator<char> fbegin(file), fend;
@@ -57,27 +58,34 @@ void step(int & ch)
   ch = getch();
 }
 
-//find max sub-indexed plot and return it as the stride
-long stride_count(std::string file_contents)
+template <class T>
+T max_value(const std::string & file_contents, const std::regex & re)
 {
-  std::regex re("\\{(\\d+)\\}");
-  long max = 0;
+  long max = -1;
   std::smatch results;
-  std::regex_search(file_contents, results, re);
-  //iterate results
+  if(std::regex_search(file_contents, results, re))
+    for(size_t i = 0; i < results.size(); ++i)
+      if(i != 0) // only use submatch
+	max = std::max(stol(results[i]), max);
+  return max;
+}
+
+//find max sub-indexed plot and return it as the stride
+long stride_count(const std::string & file_contents)
+{
+  return max_value<long>(file_contents, std::regex("\\{(\\d+)\\}"));
 }
 
 //insert the dat filename into file_contents
-std::string insert_dat_file(std::string file_contents, std::string dat_name)
+std::string insert_dat_file(const std::string & file_contents, const std::string & dat_name)
 {
-  std::regex re("\\{DAT\\}");
-  return std::regex_replace(file_contents, re, dat_name);
+  return std::regex_replace(file_contents, std::regex("\\{DAT\\}"), dat_name);
 }
 
 //finx the max occurance of #/d+
-long plot_count(std::string file_contents)
+long plot_count(const std::string & file_contents)
 {
-  std::regex re("#(\\d+)");
+  return max_value<long>(file_contents, std::regex("#(\\d+)")) + 1;
 }
 
 int main(int argc, char ** argv)
@@ -89,32 +97,22 @@ int main(int argc, char ** argv)
       return EXIT_FAILURE;
     }
 
-  std::string command_file_name{argv[1]);
-  std::string data_file_name{argv[2]);
+  std::string command_file_name(argv[1]);
+  std::string data_file_name(argv[2]);
 
   auto data = file_to_string(data_file_name);
-  auto command = file_to_string(plot_file_name);
+  auto command = file_to_string(command_file_name);
   command = insert_dat_file(command, data_file_name);
 
-  //replace {DAT} in argv[1] with argv[2]
-  //stride = count number of {/d+} in argv[1]
-  //plot_count = find #\d+ in 
-  
   std::regex re_subindex("\\{(\\d+)\\}");
-
-  //find max index
-  std::regex re_count("#(\\d+)");
   
   //process loop
   unsigned long index = 0;
-  unsigned long stride = 3;
-  unsigned long max_index = 0;
+  unsigned long stride = stride_count(command);
+  unsigned long max_index = plot_count(data);
 
   auto fmt = [&index, stride](const std::string & match)->std::string
-    { 
-      std::cout << match << " " << stol(match) + 1 << std::endl;
-      return std::to_string((stride * index) + stol(match) + 1);
-    };
+    { return std::to_string((stride * index) + stol(match) + 1); };
 
   start_ncurses();
   auto gp = start_gnuplot();
@@ -124,19 +122,19 @@ int main(int argc, char ** argv)
       fprintf(gp, "plot %lu \n", index);
       fflush(gp);
 
-      switch(getch())
+      switch(ch)
 	{
 	case KEY_LEFT:
 	  if(index > 0) --index;
 	  break;
 	case KEY_RIGHT:
-	  ++index;
+	  if(index < max_index) ++index;
 	  break;
 	default:
 	  break;
 	}
       using namespace bsb::regex_ext;
-      auto command = regex_replace_ext(command, 
+      auto populated_command = regex_replace_ext(command, 
 				       re_subindex,
 				       fmt);
     }

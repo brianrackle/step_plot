@@ -1,6 +1,6 @@
 CC = clang
 CXX = clang++
-CXXFLAGS = --stdlib=libc++ --std=c++14 -I /usr/include/ -I ~/repos/brainstem_breakfast/source/ -lncurses
+CXXFLAGS = --stdlib=libc++ --std=c++14 -I /usr/include/ -I ~/repos/brainstem_breakfast/source/ -lncurses -g
 
 
 main.o: main.cpp
