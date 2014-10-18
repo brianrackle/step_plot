@@ -2,9 +2,10 @@
 ## Initialize Environment
 sudo apt-get update -y
 sudo apt-get upgrade -y
-sudo apt-get install -y g++ subversion cmake emacs git xdg-utils htop ncurses-dev ruby ruby-dev nodejs make default-jre default-jdk ack-grep gnuplot-x11
+sudo apt-get install -y g++ subversion cmake emacs git xdg-utils htop ncurses-dev ruby ruby-dev nodejs make default-jre default-jdk ack-grep gnuplot-x11 lldb-3.5
 sudo mkdir repos
 
+#DISCARD START REPLACE WITH apt-get install clang-3.5 lldb-3.5
 ## Pull Clang and LLVM
 cd ~/repos/
 sudo mkdir clang
@@ -20,6 +21,12 @@ cd build
 sudo ../llvm/configure --enable-optimized --enable-targets=host --disable-compiler-version-checks
 sudo make -j 8
 sudo make install
+#DISCARD END
+
+#Create .bash_aliases file
+#alias clang='clang-3.5'
+#alias clang++?
+#alias lldb='lldb-3.5'
 
 ## Pull and Make libc++
 cd ~/repos/clang
