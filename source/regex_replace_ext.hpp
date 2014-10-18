@@ -8,6 +8,7 @@
 #include <vector>
 #include <numeric>
 #include <type_traits>
+#include <sstream>
 
 namespace bsb
 {
