@@ -23,6 +23,11 @@ sudo make -j 8
 sudo make install
 #DISCARD END
 
+#Create .bash_aliases file
+#alias clang='clang-3.5'
+#alias clang++?
+#alias lldb='lldb-3.5'
+
 ## Pull and Make libc++
 cd ~/repos/clang
 sudo svn co http://llvm.org/svn/llvm-project/libcxx/trunk libcxx
