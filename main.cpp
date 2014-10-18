@@ -3,21 +3,14 @@
 #include <stdio.h>
 #include <fstream>
 #include <iostream>
-#include <stdexcept>
+#include <functional>
 #include "ncurses.h"
 #include "regex_replace_ext.hpp"
 
 #define GNUPLOT "gnuplot -persist"
 
-int main(int argc, char ** argv)
+FILE * start_gnuplot()
 {
-  //load file
-  if(argc != 2)
-    {
-      printf("invalid arguements\n");
-      return EXIT_FAILURE;
-    }
-
   //initialize gnuplot
   FILE * gp;
   gp = popen(GNUPLOT,"w");
@@ -25,44 +18,116 @@ int main(int argc, char ** argv)
     {
       printf("error opening pipe to GNU plot\n");
       fflush(gp);
-      return EXIT_FAILURE;
+      throw;
     }
 
   fprintf(gp, "set term x11 noraise persist\n");
   fflush(gp);
-  
-  //ncurses
+  return gp;
+}
+
+void stop_gnuplot(FILE * gp)
+{
+  fprintf(gp, "exit \n");
+  fflush(gp);
+  fclose(gp);
+}
+
+void start_ncurses()
+{
   initscr();
   keypad(stdscr, TRUE);
   noecho();
+}
 
-  std::ifstream command_file(argv[1]);
-  std::istreambuf_iterator<char> fbegin(command_file), fend;
+void stop_ncurses()
+{
+  endwin();
+}
 
-  std::string command_contents(fbegin, fend);
-  std::regex re_stride("\\{plots (\\d+)\\}");
+std::string file_to_string(char * file_path)
+{
+  std::ifstream file(file_path);
+  std::istreambuf_iterator<char> fbegin(file), fend;
+  return {fbegin, fend};
+}
+
+void step(int & ch)
+{
+  ch = getch();
+}
+
+//find max sub-indexed plot and return it as the stride
+long stride_count(std::string file_contents)
+{
+  std::regex re("\\{(\\d+)\\}");
+  long max = 0;
+  std::smatch results;
+  std::regex_search(file_contents, results, re);
+  //iterate results
+}
+
+//insert the dat filename into file_contents
+std::string insert_dat_file(std::string file_contents, std::string dat_name)
+{
+  std::regex re("\\{DAT\\}");
+  return std::regex_replace(file_contents, re, dat_name);
+}
+
+//finx the max occurance of #/d+
+long plot_count(std::string file_contents)
+{
+  std::regex re("#(\\d+)");
+}
+
+int main(int argc, char ** argv)
+{
+  //load file
+  if(argc != 3)
+    {
+      printf("invalid arguements\n");
+      return EXIT_FAILURE;
+    }
+
+  std::string command_file_name{argv[1]);
+  std::string data_file_name{argv[2]);
+
+  auto data = file_to_string(data_file_name);
+  auto command = file_to_string(plot_file_name);
+  command = insert_dat_file(command, data_file_name);
+
+  //replace {DAT} in argv[1] with argv[2]
+  //stride = count number of {/d+} in argv[1]
+  //plot_count = find #\d+ in 
+  
   std::regex re_subindex("\\{(\\d+)\\}");
-  
-  std::smatch plots_match;
-  std::regex_search(command_contents, plots_match, re_stride);
-  
-  unsigned long stride = stol(plots_match[1]);
-  std::cout << stride << std::endl;
+
+  //find max index
+  std::regex re_count("#(\\d+)");
   
   //process loop
   unsigned long index = 0;
-  auto ch = -1;
-  while(ch != 'q')
+  unsigned long stride = 3;
+  unsigned long max_index = 0;
+
+  auto fmt = [&index, stride](const std::string & match)->std::string
+    { 
+      std::cout << match << " " << stol(match) + 1 << std::endl;
+      return std::to_string((stride * index) + stol(match) + 1);
+    };
+
+  start_ncurses();
+  auto gp = start_gnuplot();
+  for(int ch = -1; ch != 'q'; step(ch))
     {
+      //"load FILE
       fprintf(gp, "plot %lu \n", index);
       fflush(gp);
 
-      ch = getch();
-      switch(ch)
+      switch(getch())
 	{
 	case KEY_LEFT:
-	  if(index > 0)
-	    --index;
+	  if(index > 0) --index;
 	  break;
 	case KEY_RIGHT:
 	  ++index;
@@ -70,22 +135,13 @@ int main(int argc, char ** argv)
 	default:
 	  break;
 	}
-
-      /*
-     auto command_string = bsb::regex_ext::regex_replace_ext(command_contents, re_subindex, 
-					[index,stride](const std::string & string_match)
-					{
-					  long sub_index = stol(string_match) + 1;
-					  return std::to_string((stride * index) + sub_index);
-					});  
-      */    
+      using namespace bsb::regex_ext;
+      auto command = regex_replace_ext(command, 
+				       re_subindex,
+				       fmt);
     }
+  stop_gnuplot(gp);
+  stop_ncurses();
 
-  fprintf(gp, "exit \n");
-  fflush(gp);
-
-  fclose(gp);
-
-  endwin();
   return EXIT_SUCCESS;
 }
