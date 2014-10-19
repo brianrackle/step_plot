@@ -71,7 +71,7 @@ T max_value(const std::string & file_contents, const std::regex & re)
 //find max sub-indexed plot and return it as the stride
 unsigned long stride_count(const std::string & file_contents)
 {
-    return max_value<unsigned long>(file_contents, std::regex("\\{(\\d+)\\}"));
+    return max_value<unsigned long>(file_contents, std::regex("\\{(\\d+)\\}")) + 1;
 }
 
 //insert the dat filename into file_contents
@@ -107,13 +107,14 @@ int main(int argc, char ** argv)
   //process loop
   unsigned long index = 0;
   unsigned long stride = stride_count(command);
-  unsigned long max_index = plot_count(data);
+  unsigned long max_index = plot_count(data)-1;
 
-    auto fmt = [&index, stride](const unsigned m_index, const std::string & match)->std::string
+  auto fmt = [&index, stride](const unsigned m_index, const std::string & match)->std::string
     { return std::to_string((stride * index) + stol(match)); }; //index can only be 1
 
   start_ncurses();
   auto gp = start_gnuplot();
+
   for(int ch = -1; ch != 'q'; step(ch))
     {
       switch(ch)
@@ -127,11 +128,14 @@ int main(int argc, char ** argv)
 	default:
 	  break;
 	}
-
+      erase();
+      move(0,0);
       using namespace bsb::regex_ext;
-      fprintf(gp, "%s \n", regex_replace_ext(command,
-					     re_subindex,
-					     fmt).c_str());
+      std::string formated_command = regex_replace_ext(command,
+						       re_subindex,
+						       fmt);
+      printw(formated_command.c_str());
+      fprintf(gp, "%s \n", formated_command.c_str());
       fflush(gp);
     }
   stop_gnuplot(gp);
