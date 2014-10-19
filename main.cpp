@@ -61,19 +61,17 @@ void step(int & ch)
 template <class T>
 T max_value(const std::string & file_contents, const std::regex & re)
 {
-  long max = -1;
-  std::smatch results;
-  if(std::regex_search(file_contents, results, re))
-    for(size_t i = 0; i < results.size(); ++i)
-      if(i != 0) // only use submatch
-	max = std::max(stol(results[i]), max);
-  return max;
+    T max = 0;
+    std::sregex_iterator begin(file_contents.begin(), file_contents.end(), re), end;
+    for (auto it = begin; it != end; ++it)
+        max = std::max<T>(stol((*it)[1]), max);
+    return max;
 }
 
 //find max sub-indexed plot and return it as the stride
-long stride_count(const std::string & file_contents)
+unsigned long stride_count(const std::string & file_contents)
 {
-  return max_value<long>(file_contents, std::regex("\\{(\\d+)\\}"));
+    return max_value<unsigned long>(file_contents, std::regex("\\{(\\d+)\\}"));
 }
 
 //insert the dat filename into file_contents
@@ -83,9 +81,9 @@ std::string insert_dat_file(const std::string & file_contents, const std::string
 }
 
 //finx the max occurance of #/d+
-long plot_count(const std::string & file_contents)
+unsigned long plot_count(const std::string & file_contents)
 {
-  return max_value<long>(file_contents, std::regex("#(\\d+)")) + 1;
+    return max_value<unsigned long>(file_contents, std::regex("#(\\d+)"));
 }
 
 int main(int argc, char ** argv)
@@ -97,8 +95,8 @@ int main(int argc, char ** argv)
       return EXIT_FAILURE;
     }
 
-  std::string command_file_name(argv[1]);
-  std::string data_file_name(argv[2]);
+  std::string command_file_name = argv[1];
+  std::string data_file_name = argv[2];
 
   auto data = file_to_string(data_file_name);
   auto command = file_to_string(command_file_name);
@@ -111,17 +109,13 @@ int main(int argc, char ** argv)
   unsigned long stride = stride_count(command);
   unsigned long max_index = plot_count(data);
 
-  auto fmt = [&index, stride](const std::string & match)->std::string
-    { return std::to_string((stride * index) + stol(match) + 1); };
+    auto fmt = [&index, stride](const unsigned m_index, const std::string & match)->std::string
+    { return std::to_string((stride * index) + stol(match)); }; //index can only be 1
 
   start_ncurses();
   auto gp = start_gnuplot();
   for(int ch = -1; ch != 'q'; step(ch))
     {
-      //"load FILE
-      fprintf(gp, "plot %lu \n", index);
-      fflush(gp);
-
       switch(ch)
 	{
 	case KEY_LEFT:
@@ -133,10 +127,12 @@ int main(int argc, char ** argv)
 	default:
 	  break;
 	}
+
       using namespace bsb::regex_ext;
-      auto populated_command = regex_replace_ext(command, 
-				       re_subindex,
-				       fmt);
+      fprintf(gp, "%s \n", regex_replace_ext(command,
+					     re_subindex,
+					     fmt).c_str());
+      fflush(gp);
     }
   stop_gnuplot(gp);
   stop_ncurses();
