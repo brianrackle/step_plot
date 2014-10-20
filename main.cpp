@@ -68,6 +68,16 @@ T max_value(const std::string & file_contents, const std::regex & re)
     return max;
 }
 
+template <class T>
+T count_value(const std::string & file_contents, const std::regex & re)
+{
+  T count = 0;
+    std::sregex_iterator begin(file_contents.begin(), file_contents.end(), re), end;
+    for (auto it = begin; it != end; ++it)
+      ++count;
+    return count;  
+}
+
 //find max sub-indexed plot and return it as the stride
 unsigned long stride_count(const std::string & file_contents)
 {
@@ -83,7 +93,7 @@ std::string insert_dat_file(const std::string & file_contents, const std::string
 //finx the max occurance of #/d+
 unsigned long plot_count(const std::string & file_contents)
 {
-    return max_value<unsigned long>(file_contents, std::regex("#(\\d+)"));
+    return count_value<unsigned long>(file_contents, std::regex("#(\\d+)"));
 }
 
 int main(int argc, char ** argv)
