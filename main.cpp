@@ -5,6 +5,7 @@
 #include <iostream>
 #include <functional>
 #include <algorithm>
+#include <string>
 #include "ncurses.h"
 #include "regex_replace_ext.hpp"
 
@@ -56,6 +57,20 @@ std::string file_to_string(std::string file_path)
 void step(int & ch)
 {
   ch = getch();
+}
+
+long step_to()
+{
+  printw("index: ");
+  echo();
+  char str[13];
+  getstr(str);
+  noecho();
+  std::regex re("\\d+");
+  if(std::regex_match(str, re))
+    return std::stol(str);
+  else
+    return 0;
 }
 
 template <class T>
@@ -127,6 +142,8 @@ int main(int argc, char ** argv)
 
   for(int ch = -1; ch != 'q'; step(ch))
     {
+      erase();
+      move(0,0);
       switch(ch)
 	{
 	case KEY_LEFT:
@@ -134,6 +151,9 @@ int main(int argc, char ** argv)
 	  break;
 	case KEY_RIGHT:
 	  if(index < max_index) ++index;
+	  break;
+	case 'i': //go to index
+	  index = step_to();
 	  break;
 	default:
 	  break;
@@ -153,3 +173,5 @@ int main(int argc, char ** argv)
 
   return EXIT_SUCCESS;
 }
+
+//TODO: Work with variables http://gnuplot.sourceforge.net/docs_4.2/node60.html
