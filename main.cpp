@@ -59,18 +59,23 @@ void step(int & ch)
   ch = getch();
 }
 
-long step_to()
+unsigned long string_to_ulong(const std::string& str)
+{
+  noecho();
+  std::regex re("\\d+");
+  if(std::regex_match(str, re))
+    return std::stoul(str);
+  else
+    return 0;
+}
+
+unsigned long step_to()
 {
   printw("index: ");
   echo();
   char str[13];
   getstr(str);
-  noecho();
-  std::regex re("\\d+");
-  if(std::regex_match(str, re))
-    return std::stol(str);
-  else
-    return 0;
+  return string_to_ulong(str);
 }
 
 template <class T>
@@ -96,7 +101,9 @@ T count_value(const std::string & file_contents, const std::regex & re)
 //find max sub-indexed plot and return it as the stride
 unsigned long stride_count(const std::string & file_contents)
 {
-    return max_value<unsigned long>(file_contents, std::regex("\\{(\\d+)\\}")) + 1;
+  std::smatch count_match;
+  std::regex_search(file_contents, count_match, std::regex("PLOT_COUNT = (\\d+)"));
+  return string_to_ulong(count_match[1]);
 }
 
 //insert the dat filename into file_contents
@@ -109,6 +116,13 @@ std::string insert_dat_file(const std::string & file_contents, const std::string
 unsigned long plot_count(const std::string & file_contents)
 {
     return count_value<unsigned long>(file_contents, std::regex("#(\\d+)"));
+}
+
+using var_list = std::vector<std::pair<std::string, std::string>>;
+var_list get_vars(const std::string & file_contents, const std::string & var)
+{
+  //need to use a lexical parser to navigate open and close brackets
+  std::regex re("\\{" + var + ":\"(\\w+)\"");
 }
 
 int main(int argc, char ** argv)
