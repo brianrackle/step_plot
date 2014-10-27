@@ -118,13 +118,6 @@ unsigned long plot_count(const std::string & file_contents)
     return count_value<unsigned long>(file_contents, std::regex("#(\\d+)"));
 }
 
-using var_list = std::vector<std::pair<std::string, std::string>>;
-var_list get_vars(const std::string & file_contents, const std::string & var)
-{
-  //need to use a lexical parser to navigate open and close brackets
-  std::regex re("\\{" + var + ":\"(\\w+)\"");
-}
-
 int main(int argc, char ** argv)
 {
   //load file
