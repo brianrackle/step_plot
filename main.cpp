@@ -10,7 +10,6 @@
 #define GNUPLOT "gnuplot -persist"
 
 //TODO(brian): don't convert file to string to allow large file processing
-//TODO(brian): display end index and current index
 //TODO(brian): skip, 10 (char '1'), 100 (char '2'), 1000 (char '3'), 10000 (char '4'), etc...
 //TODO(brian): run without using gnuplot indexing for faster processing
 //TODO(brian): allow binary data input type for reduced file size
@@ -55,22 +54,32 @@ int step() {
     return getch();
 }
 
-unsigned long string_to_ulong(const std::string &str) {
+long string_to_long(const std::string &str) {
     noecho();
     std::regex re("\\d+");
     if (std::regex_match(str, re))
-        return std::stoul(str);
+        return std::stol(str);
     else
         return 0;
 }
 
-unsigned long step_to() {
+long step_to() {
     printw("index: ");
     echo();
     char str[13];
     getstr(str);
-    return string_to_ulong(str);
+    return string_to_long(str);
 }
+
+long step_by(const long &m_index, const long &m_max_index, const long &m_step_index) {
+    if (m_index + m_step_index < 0) {
+        return 0;
+    }
+    if (m_index + m_step_index >= m_max_index) {
+        return m_max_index;
+    }
+    return m_index + m_step_index;
+};
 
 //template <class T>
 //T max_value(const std::string & file_contents, const std::regex & re)
@@ -92,10 +101,10 @@ T count_value(const std::string &file_contents, const std::regex &re) {
 }
 
 //find max sub-indexed plot and return it as the stride
-unsigned long stride_count(const std::string &file_contents) {
+long stride_count(const std::string &file_contents) {
     std::smatch count_match;
     std::regex_search(file_contents, count_match, std::regex("PLOT_COUNT = (\\d+)"));
-    return string_to_ulong(count_match[1]);
+    return string_to_long(count_match[1]);
 }
 
 //insert the dat filename into file_contents
@@ -104,7 +113,7 @@ std::string insert_dat_file(const std::string &file_contents, const std::string 
 }
 
 //finx the max occurance of #/d+
-unsigned long plot_count(const std::string &file_contents) {
+long plot_count(const std::string &file_contents) {
     return count_value<unsigned long>(file_contents, std::regex("#(\\d+)"));
 }
 
@@ -112,18 +121,20 @@ int main(int argc, char **argv) {
     namespace po = boost::program_options;
     namespace fs = boost::filesystem;
 
-//  po::positional_options_description p_desc("Postional options");
-//  p_desc.add("command-file", 0);
-//  p_desc.add("data-file", 1);
+    std::string command_file_option = "command-file";
+    std::string data_file_option = "data-file";
 
     po::options_description desc("Allowed options");
     desc.add_options()
             ("help", "produce help message")
-            ("command-file", po::value<fs::path>(), "gnu plot command file")
-            ("data-file", po::value<fs::path>(), "plot data file");
+            (command_file_option.c_str(), po::value<fs::path>(), "gnu plot command file")
+            (data_file_option.c_str(), po::value<fs::path>(), "plot data file");
+
+    po::positional_options_description p_desc;
+    p_desc.add(command_file_option.c_str(), 1).add(data_file_option.c_str(), 1);
 
     po::variables_map vm;
-    po::store(po::parse_command_line(argc, argv, desc), vm);
+    po::store(po::command_line_parser(argc, argv).options(desc).positional(p_desc).run(), vm);
     po::notify(vm);
 
     if (argc <= 1 || vm.count("help")) {
@@ -132,12 +143,12 @@ int main(int argc, char **argv) {
     }
 
     fs::path command_file_path;
-    if (vm.count("command-file"))
-        command_file_path = vm["command-file"].as<fs::path>();
+    if (vm.count(command_file_option))
+        command_file_path = vm[command_file_option].as<fs::path>();
 
     fs::path data_file_path;
-    if (vm.count("data-file"))
-        data_file_path = vm["data-file"].as<fs::path>();
+    if (vm.count(data_file_option))
+        data_file_path = vm[data_file_option].as<fs::path>();
 
     bool failure = false;
 
@@ -161,13 +172,14 @@ int main(int argc, char **argv) {
     std::regex re_subindex("\\{(\\d+)\\}");
 
     //process loop
-    unsigned long index = 0;
-    unsigned long stride = stride_count(command);
-    unsigned long max_index = plot_count(data) - 1;
+    long index = 0;
+    long stride = stride_count(command);
+    long max_index = plot_count(data) - 1;
 
     auto fmt = [&index, stride](const unsigned m_index, const std::string &match) -> std::string {
         return std::to_string((stride * index) + stol(match));
     }; //index can only be 1
+
 
     start_ncurses();
     auto gp = start_gnuplot();
@@ -175,19 +187,53 @@ int main(int argc, char **argv) {
     for (int ch = -1; ch != 'q'; ch = step()) {
         erase();
         move(0, 0);
+        long increment = 0;
+
         switch (ch) {
+            case '1':
+                increment = -10000;
+                break;
+            case '2':
+                increment = -1000;
+                break;
+            case '3':
+                increment = -100;
+                break;
+            case '4':
+                increment = -10;
+                break;
+            case '5':
+                increment = -1;
+                break;
+            case '6':
+                increment = 1;
+                break;
+            case '7':
+                increment = 10;
+                break;
+            case '8':
+                increment = 100;
+                break;
+            case '9':
+                increment = 1000;
+                break;
+            case '0':
+                increment = 10000;
+                break;
             case KEY_LEFT:
-                if (index > 0) --index;
+                increment = -1;
                 break;
             case KEY_RIGHT:
-                if (index < max_index) ++index;
+                increment = 1;
                 break;
             case 'i': //go to index
-                index = step_to();
+                increment = step_to() - index;
                 break;
             default:
                 break;
         }
+        index = step_by(index, max_index, increment);
+
         erase();
         move(0, 0);
         using namespace bsb::regex_ext;
@@ -195,7 +241,10 @@ int main(int argc, char **argv) {
                                                           re_subindex,
                                                           fmt);
         //print command for user
-        printw(formatted_command.c_str());
+        printw("current index:  %d\nmax index: %d\n\nplot:\n%s",
+               index,
+               max_index,
+               formatted_command.c_str());
         //print command for gnuplot
         fprintf(gp, "%s \n", formatted_command.c_str());
         fflush(gp);
