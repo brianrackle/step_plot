@@ -9,10 +9,12 @@
 
 #define GNUPLOT "gnuplot -persist"
 
-//TODO(brian): don't convert file to string to allow large file processing
-//TODO(brian): skip, 10 (char '1'), 100 (char '2'), 1000 (char '3'), 10000 (char '4'), etc...
+//TODO(brian): examination of current plot output in string form
+//TODO(brian): don't convert file to string to allow better large file processing
 //TODO(brian): run without using gnuplot indexing for faster processing
-//TODO(brian): allow binary data input type for reduced file size
+//TODO(brian): output to application and drop terminal ncurses (xnest or qt)
+
+
 FILE *start_gnuplot() {
     //initialize gnuplot
     FILE *gp;

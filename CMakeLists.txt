@@ -7,7 +7,9 @@ set(CMAKE_CXX_FLAGS "${CM_CXX_FLAGS} --stdlib=libstdc++ --std=c++14")
 
 set(SOURCE_FILES main.cpp)
 
-add_executable(${EXECUTABLE_NAME} ${SOURCE_FILES})
+add_executable(${EXECUTABLE_NAME} ${SOURCE_FILES} step_log/step_log_test.cpp step_log/step_log.h)
+
+add_subdirectory(step_log)
 
 find_package(Boost COMPONENTS system program_options filesystem)
 find_package(Curses)
