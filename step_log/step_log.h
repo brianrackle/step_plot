@@ -4,118 +4,141 @@
 #include <vector>
 #include <cereal/archives/portable_binary.hpp>
 
-namespace x_dimensional {
-    using d_t = std::size_t;
+namespace k_dimensional {
+    using dimension_t = std::size_t;
 
-    namespace euclidian {
-        constexpr d_t x = 0, y = 1, z = 2;
-    }
+    template<dimension_t Dimension, class Type>
+    class kd;
 
-    namespace homogenous {
-        constexpr d_t x = 0, y = 1, z = 2, w = 3;
-    }
-
-    namespace rgba {
-        constexpr d_t r = 0, g = 1, b = 2, a = 3;
-    }
-
-    namespace cymk {
-        constexpr d_t c = 0, y = 1, m = 2, k = 3;
-    }
-
-    template<d_t Dimension, class T>
-    class xd;
-
-    template<class T>
-    class xd<1, T> {
+    //TODO(brian): create move constructor
+    template<class Type>
+    class kd<1, Type> {
     public:
-        xd() { }
+        kd() { }
 
-        xd(const T &v) : value(v) { }
+        kd(const Type &v) : value(v) { }
 
-        T value = {};
+    private:
+        template<dimension_t I, dimension_t D, class T>
+        friend
+        class get_helper;
+
+        Type value = {};
     };
 
-    template<d_t Dimension, class T>
-    class xd {
+    template<dimension_t Dimension, class Type>
+    class kd {
     public:
-        xd() { }
+        kd() { }
 
         template<class ... Ts>
-        xd(const T &v, const Ts &... vs) : value(v), tail(vs...) { }
+        kd(const Type &v, const Ts &... vs) : value(v), tail(vs...) { }
 
-        T value = {};
-        xd<Dimension - 1, T> tail;
+    private:
+        template<dimension_t I, dimension_t D, class T>
+        friend
+        class get_helper;
+
+        Type value = {};
+        kd<Dimension - 1, Type> tail;
     };
 
-    template<class T, class ... Ts>
-    auto make_point_xd(const T &v, const Ts &... vs) {
-        return xd<1 + sizeof...(vs), T>(v, vs...);
+    //TODO(brian): complete perfect forwarding
+    //TODO(brian): complete r-value reference passing
+    template<class Type, class ... Ts>
+    auto make_kd(const Type &&v, const Ts &&... vs) {
+        return kd<1 + sizeof...(vs), Type>(v, vs...);
     }
 
-    template<d_t D, d_t Dimension, class T>
+    template<dimension_t Index, dimension_t Dimension, class Type>
     class get_helper;
 
-    template<d_t Dimension, class T>
-    class get_helper<0, Dimension, T> {
+    template<dimension_t Dimension, class Type>
+    class get_helper<0, Dimension, Type> {
     public:
-        auto &operator()(const xd<Dimension, T> &v) {
+        auto &operator()(const kd<Dimension, Type> &v) {
             return v.value;
         }
     };
 
-    template<d_t D, d_t Dimension, class T>
+    template<dimension_t Index, dimension_t Dimension, class Type>
     class get_helper {
     public:
-        auto &operator()(const xd<Dimension, T> &v) {
-            get_helper<D - 1, Dimension - 1, T> helper;
+        auto &operator()(const kd<Dimension, Type> &v) {
+            get_helper<Index - 1, Dimension - 1, Type> helper;
             return helper(v.tail);
         }
     };
 
-    template<d_t D, d_t Dimension, class T>
-    auto &get(const xd<Dimension, T> &v) {
-        get_helper<D, Dimension, T> helper;
+    template<dimension_t Index, dimension_t Dimension, class Type>
+    auto &get(const kd<Dimension, Type> &v) {
+        get_helper<Index, Dimension, Type> helper;
         return helper(v);
     }
 
-    template<d_t Dimension, class T>
+    template<dimension_t Dimension, class Type>
     class primitive {
-        std::vector<xd<Dimension, T>> data;
+        std::vector<kd<Dimension, Type>> data;
     };
+
+    //TODO(brian): add other common dimensional types under relevant namespaces
+    template<class Type>
+    using k1d = kd<1, Type>;
+    template<class Type>
+    using k2d = kd<2, Type>;
+    template<class Type>
+    using k3d = kd<3, Type>;
+    template<class Type>
+    using k4d = kd<4, Type>;
+
+    namespace euclidian {
+        constexpr dimension_t x = 0, y = 1, z = 2;
+    }
+
+    namespace homogenous {
+        constexpr dimension_t x = 0, y = 1, z = 2, w = 3;
+    }
+
+    namespace rgb {
+        constexpr dimension_t r = 0, g = 1, b = 2;
+    }
+
+    namespace cmyk {
+        constexpr dimension_t c = 0, m = 1, y = 2, k = 3;
+    }
 }
 
 //TODO(brian): finish plot definitions
 
-//template <class T>
+//template <class Type>
 //class points : public primitive
 //{
 //public:
 //
 //};
 //
-//template <class T>
+//template <class Type>
 //class line : public points
 //{
 //
 //};
 //
-//template <class T>
+//template <class Type>
 //class polygon : public points
 //{
 //
 //};
 
-template<class T>
+template<class Type>
 class plot {
     //need format for grouping during output
-    // std::vector<primitive<T>> data;
+    // std::vector<primitive<Type>> data;
 };
 
-//TODO(brian): verify T is a numeric type
-template<class T>
+//TODO(brian): verify Type is a numeric type
+template<class Type>
 class plots {
-    // std::vector<plot<T>> data;
+    // std::vector<plot<Type>> data;
 };
 
 #endif //PROJECT_STEP_LOG_H

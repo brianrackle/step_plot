@@ -1,12 +1,15 @@
 #include "step_log.h"
 
 int main(int argc, char **argv) {
-    using namespace x_dimensional;
+    using namespace k_dimensional;
 
-    xd<3, double> point0(1, 2, 3); //type xd<3, double>
-    auto point1 = make_point_xd<double>(1, 2, 3); //type xd<3,double>
-    auto point2 = make_point_xd(1, 2, 3); //type xd<3,int>
-    xd<3, double> point3; //values are default constructed
+    k3d<double> point0(1, 2, 3); //type xd<3, double>
+    auto point1 = make_kd<double>(1, 2, 3); //type xd<3,double>
+    auto point2 = make_kd(1, 2, 3); //type xd<3,int>
+
+    kd<3, double> point3; //values are default constructed
+    kd<3, double> point4(double { }, double{}, double{}); //values are default constructed
+    auto v = get<0>(point4);
     {
         using namespace euclidian;
         auto value0 = get<x>(point0); //value0 == 1
@@ -14,11 +17,11 @@ int main(int argc, char **argv) {
         auto value2 = get<z>(point0); //value2 == 3
     }
     {
-        using namespace rgba;
-        auto value0 = get<r>(point0);
-        auto value1 = get<g>(point1);
-        auto value2 = get<b>(point2);
+        using namespace rgb;
+        kd<3, unsigned char> color(255, 255, 255);
+        auto value0 = get<r>(color);
+        auto value1 = get<g>(color);
+        auto value2 = get<b>(color);
         //TODO(brian): assert get<N>(xd(K)) N <= K
     }
-
 }
