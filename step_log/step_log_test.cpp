@@ -24,4 +24,16 @@ int main(int argc, char **argv) {
         auto value2 = get<b>(color);
         //TODO(brian): assert get<N>(xd(K)) N <= K
     }
+
+//    for(std::size_t i = 0; i < 1000000; ++i)
+//    {
+//        std::size_t result = 0;
+//        k3d<std::size_t> test(i, i + 1, i + 2);
+//        static_for<0,size(test)>
+//            (test,[](kd_element<std::size_t> v)
+//            {
+//                auto j = v;
+//            });
+//    }
+
 }

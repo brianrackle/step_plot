@@ -4,13 +4,16 @@
 #include <vector>
 #include <cereal/archives/portable_binary.hpp>
 
+//TODO(brian): allow for matrix definitions up to hypermatrix
 namespace k_dimensional {
     using dimension_t = std::size_t;
+
+    template<class Type>
+    using kd_element = Type &;
 
     template<dimension_t Dimension, class Type>
     class kd;
 
-    //TODO(brian): create move constructor
     template<class Type>
     class kd<1, Type> {
     public:
@@ -56,30 +59,56 @@ namespace k_dimensional {
     template<dimension_t Dimension, class Type>
     class get_helper<0, Dimension, Type> {
     public:
-        auto &operator()(const kd<Dimension, Type> &v) {
-            return v.value;
+        constexpr kd_element<Type> operator()(const kd<Dimension, Type> &v) {
+            return const_cast<Type &>(v.value);
         }
     };
 
     template<dimension_t Index, dimension_t Dimension, class Type>
     class get_helper {
     public:
-        auto &operator()(const kd<Dimension, Type> &v) {
-            get_helper<Index - 1, Dimension - 1, Type> helper;
-            return helper(v.tail);
+        constexpr kd_element<Type> operator()(const kd<Dimension, Type> &v) {
+            return get_helper<Index - 1, Dimension - 1, Type>()(v.tail);
         }
     };
 
     template<dimension_t Index, dimension_t Dimension, class Type>
-    auto &get(const kd<Dimension, Type> &v) {
-        get_helper<Index, Dimension, Type> helper;
-        return helper(v);
+    constexpr kd_element<Type> get(const kd<Dimension, Type> &v) {
+        return get_helper<Index, Dimension, Type>()(v);
     }
 
     template<dimension_t Dimension, class Type>
-    class primitive {
-        std::vector<kd<Dimension, Type>> data;
-    };
+    constexpr dimension_t size(const kd<Dimension, Type> &v) {
+        return Dimension;
+    }
+
+//    template<dimension_t FromIndex, dimension_t ToIndex, dimension_t Dimension, class Type>
+//    class static_for_helper;
+//
+//    template<dimension_t ToIndex, dimension_t Dimension, class Type>
+//    class static_for_helper<ToIndex, ToIndex, Dimension, Type>
+//    {
+//        void operator()(const kd<Dimension, Type> &v, const std::function<void (kd_element<Type>)> & func)
+//        {
+//
+//        }
+//    };
+//
+//    template<dimension_t FromIndex, dimension_t ToIndex, dimension_t Dimension, class Type>
+//    class static_for_helper
+//    {
+//        void operator()(const kd<Dimension, Type> &v, const std::function<void (kd_element<Type>)> & func)
+//        {
+//            func(get<FromIndex>(v));
+//            static_for_helper<FromIndex + 1, ToIndex, Dimension, Type>()(v, func);
+//        }
+//    };
+
+//    template<dimension_t FromIndex, dimension_t ToIndex, dimension_t Dimension, class Type>
+//    void static_for(const kd<Dimension, Type> &v, std::function<void (kd_element<Type>)> func)
+//    {
+//        //static_for_helper<FromIndex, ToIndex, Dimension, Type>()(v, func);
+//    }
 
     //TODO(brian): add other common dimensional types under relevant namespaces
     template<class Type>
@@ -108,6 +137,10 @@ namespace k_dimensional {
     }
 }
 
+//template<dimension_t Dimension, class Type>
+//class primitive {
+//    std::vector<kd<Dimension, Type>> data;
+//};
 //TODO(brian): finish plot definitions
 
 //template <class Type>
