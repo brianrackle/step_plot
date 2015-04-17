@@ -1,3 +1,5 @@
+#include "step_log.h"
+
 int main(int argc, char **argv) {
     using namespace step_log;
 
