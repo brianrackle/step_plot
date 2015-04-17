@@ -1,39 +1,27 @@
-#include "step_log.h"
-
 int main(int argc, char **argv) {
-    using namespace k_dimensional;
+    using namespace step_log;
 
-    k3d<double> point0(1, 2, 3); //type xd<3, double>
-    auto point1 = make_kd<double>(1, 2, 3); //type xd<3,double>
-    auto point2 = make_kd(1, 2, 3); //type xd<3,int>
+    using plots_t = plots <point<double, 2>, line<double, 2>, line<double, 2>>;
 
-    kd<3, double> point3; //values are default constructed
-    kd<3, double> point4(double { }, double{}, double{}); //values are default constructed
-    auto v = get<0>(point4);
-    {
-        using namespace euclidian;
-        auto value0 = get<x>(point0); //value0 == 1
-        auto value1 = get<y>(point0); //value1 == 2
-        auto value2 = get<z>(point0); //value2 == 3
-    }
-    {
-        using namespace rgb;
-        kd<3, unsigned char> color(255, 255, 255);
-        auto value0 = get<r>(color);
-        auto value1 = get<g>(color);
-        auto value2 = get<b>(color);
-        //TODO(brian): assert get<N>(xd(K)) N <= K
-    }
+    plots_t ps;
+    plots_t::group_t group;
 
-//    for(std::size_t i = 0; i < 1000000; ++i)
+    //TODO(brian):work on access to model how deserialization will work
+    //TODO(brian):work on access to model how creation/serialization will work
+//    for(size_t i = 0; i < plots_t::stride::value; ++i)
 //    {
-//        std::size_t result = 0;
-//        k3d<std::size_t> test(i, i + 1, i + 2);
-//        static_for<0,size(test)>
-//            (test,[](kd_element<std::size_t> v)
-//            {
-//                auto j = v;
-//            });
+//        std::get<i>plots_t::group_n_t<i> p;
 //    }
+    //using plot_t = plot<point<double, 2>>;
+
+    // plots_t ps;
+    //ps.
+
+
+//    plot_t p;
+//    p.data.push_back({{0,0}});
+
+
+    //plot groups can just be organized by stride
 
 }

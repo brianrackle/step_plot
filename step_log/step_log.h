@@ -3,175 +3,81 @@
 
 #include <vector>
 #include <cereal/archives/portable_binary.hpp>
+#include <multi.hpp>
 
 //TODO(brian): allow for matrix definitions up to hypermatrix
-namespace k_dimensional {
-    using dimension_t = std::size_t;
+namespace step_log {
 
-    template<class Type>
-    using kd_element = Type &;
+    constexpr size_t x = 0, y = 1, z = 2;
 
-    template<dimension_t Dimension, class Type>
-    class kd;
+    template<class NumericT, size_t Dimension>
+    using vertex = multi::array<NumericT, Dimension>;
 
-    template<class Type>
-    class kd<1, Type> {
-    public:
-        kd() { }
-
-        kd(const Type &v) : value(v) { }
-
-    private:
-        template<dimension_t I, dimension_t D, class T>
-        friend
-        class get_helper;
-
-        Type value = {};
+    struct geometry {
     };
 
-    template<dimension_t Dimension, class Type>
-    class kd {
-    public:
-        kd() { }
+    template<class NumericT, size_t Dimension>
+    struct point : public geometry {
+        using data_t = vertex<NumericT, Dimension>;
 
-        template<class ... Ts>
-        kd(const Type &v, const Ts &... vs) : value(v), tail(vs...) { }
+        point() { }
 
-    private:
-        template<dimension_t I, dimension_t D, class T>
-        friend
-        class get_helper;
+        point(data_t &&d) : data(std::move(d)) { }
 
-        Type value = {};
-        kd<Dimension - 1, Type> tail;
+        data_t data;
     };
 
-    //TODO(brian): complete perfect forwarding
-    //TODO(brian): complete r-value reference passing
-    template<class Type, class ... Ts>
-    auto make_kd(const Type &&v, const Ts &&... vs) {
-        return kd<1 + sizeof...(vs), Type>(v, vs...);
-    }
+    template<class NumericT, size_t Dimension>
+    struct line : public geometry {
+        using data_t = std::array<vertex<NumericT, Dimension>, 2>;
 
-    template<dimension_t Index, dimension_t Dimension, class Type>
-    class get_helper;
+        line() { }
 
-    template<dimension_t Dimension, class Type>
-    class get_helper<0, Dimension, Type> {
-    public:
-        constexpr kd_element<Type> operator()(const kd<Dimension, Type> &v) {
-            return const_cast<Type &>(v.value);
-        }
+        line(data_t &&d) : data(std::move(d)) { }
+
+        data_t data;
     };
 
-    template<dimension_t Index, dimension_t Dimension, class Type>
-    class get_helper {
-    public:
-        constexpr kd_element<Type> operator()(const kd<Dimension, Type> &v) {
-            return get_helper<Index - 1, Dimension - 1, Type>()(v.tail);
-        }
+    template<class NumericT, size_t Dimension>
+    struct polygon : public geometry {
+        using data_t = std::vector<vertex<NumericT, Dimension>>;
+
+        polygon() { }
+
+        polygon(data_t &&d) : data(std::move(d)) { }
+
+        data_t data;
     };
 
-    template<dimension_t Index, dimension_t Dimension, class Type>
-    constexpr kd_element<Type> get(const kd<Dimension, Type> &v) {
-        return get_helper<Index, Dimension, Type>()(v);
-    }
+    //A collection of a single geometry type that serves as a plot.
+    template<class GeometryType>
+    struct plot {
+        using geometry_t = GeometryType;
+        using data_t = std::vector<GeometryType>; //limit plot to having only a single geometry type
 
-    template<dimension_t Dimension, class Type>
-    constexpr dimension_t size(const kd<Dimension, Type> &v) {
-        return Dimension;
-    }
+        plot() { }
 
-//    template<dimension_t FromIndex, dimension_t ToIndex, dimension_t Dimension, class Type>
-//    class static_for_helper;
-//
-//    template<dimension_t ToIndex, dimension_t Dimension, class Type>
-//    class static_for_helper<ToIndex, ToIndex, Dimension, Type>
-//    {
-//        void operator()(const kd<Dimension, Type> &v, const std::function<void (kd_element<Type>)> & func)
-//        {
-//
-//        }
-//    };
-//
-//    template<dimension_t FromIndex, dimension_t ToIndex, dimension_t Dimension, class Type>
-//    class static_for_helper
-//    {
-//        void operator()(const kd<Dimension, Type> &v, const std::function<void (kd_element<Type>)> & func)
-//        {
-//            func(get<FromIndex>(v));
-//            static_for_helper<FromIndex + 1, ToIndex, Dimension, Type>()(v, func);
-//        }
-//    };
+        plot(data_t &&d) : data(std::move(d)) { }
 
-//    template<dimension_t FromIndex, dimension_t ToIndex, dimension_t Dimension, class Type>
-//    void static_for(const kd<Dimension, Type> &v, std::function<void (kd_element<Type>)> func)
-//    {
-//        //static_for_helper<FromIndex, ToIndex, Dimension, Type>()(v, func);
-//    }
+        data_t data;
+    };
 
-    //TODO(brian): add other common dimensional types under relevant namespaces
-    template<class Type>
-    using k1d = kd<1, Type>;
-    template<class Type>
-    using k2d = kd<2, Type>;
-    template<class Type>
-    using k3d = kd<3, Type>;
-    template<class Type>
-    using k4d = kd<4, Type>;
+    //the order of the geometries should be defined, so use tuple instead
+    template<class... GeometryType>
+    struct plots {
+        using group_t = std::tuple<plot<GeometryType>...>;
+        template<size_t I>
+        using group_n_t = typename std::tuple_element<I, group_t>::type;
+        using stride = std::tuple_size<group_t>;
+        using data_t = std::vector<group_t>;
 
-    namespace euclidian {
-        constexpr dimension_t x = 0, y = 1, z = 2;
-    }
 
-    namespace homogenous {
-        constexpr dimension_t x = 0, y = 1, z = 2, w = 3;
-    }
+        plots() { }
 
-    namespace rgb {
-        constexpr dimension_t r = 0, g = 1, b = 2;
-    }
+        plots(data_t &&d) : data(std::move(d)) { }
 
-    namespace cmyk {
-        constexpr dimension_t c = 0, m = 1, y = 2, k = 3;
-    }
-}
-
-//template<dimension_t Dimension, class Type>
-//class primitive {
-//    std::vector<kd<Dimension, Type>> data;
-//};
-//TODO(brian): finish plot definitions
-
-//template <class Type>
-//class points : public primitive
-//{
-//public:
-//
-//};
-//
-//template <class Type>
-//class line : public points
-//{
-//
-//};
-//
-//template <class Type>
-//class polygon : public points
-//{
-//
-//};
-
-template<class Type>
-class plot {
-    //need format for grouping during output
-    // std::vector<primitive<Type>> data;
-};
-
-//TODO(brian): verify Type is a numeric type
-template<class Type>
-class plots {
-    // std::vector<plot<Type>> data;
+        data_t data;
+    };
 };
 
 #endif //PROJECT_STEP_LOG_H
