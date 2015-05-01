@@ -2,18 +2,47 @@
 #define PROJECT_STEP_LOG_H
 
 #include <vector>
-#include <cereal/archives/portable_binary.hpp>
-#include <multi.hpp>
+#include "cereal/archives/json.hpp"
 
-//TODO(brian): allow for matrix definitions up to hypermatrix
-namespace step_log {
-
+namespace step_log
+{
     constexpr size_t x = 0, y = 1, z = 2;
 
-    template<class NumericT, size_t Dimension>
-    using vertex = multi::array<NumericT, Dimension>;
+    enum class enum_geometry
+    {
+        e_point = 0,
+        e_line,
+        e_polygon
+    };
 
-    struct geometry {
+    enum class enum_numeric
+    {
+        e_int8 = 0,
+        e_int16,
+        e_int32,
+        e_int64,
+        e_uint8,
+        e_uint16,
+        e_uint32,
+        e_uint64,
+        e_float32,
+        e_float64
+    };
+
+    enum class enum_dimension
+    {
+        e_1d = 0,
+        e_2d,
+        e_3d,
+        e_4d
+    };
+
+    template<class NumericT, size_t Dimension>
+    using vertex = std::array<NumericT, Dimension>;
+
+    struct geometry
+    {
+
     };
 
     template<class NumericT, size_t Dimension>
@@ -50,10 +79,10 @@ namespace step_log {
     };
 
     //A collection of a single geometry type that serves as a plot.
-    template<class GeometryType>
-    struct plot {
-        using geometry_t = GeometryType;
-        using data_t = std::vector<GeometryType>; //limit plot to having only a single geometry type
+    template <class Geometry, class NumericT, size_t Dimension>
+    struct plot <Geometry<NumericT, Dimension>> {
+        using geometry_t = Geometry;
+        using data_t = std::vector<geometry_t>; //limit plot to having only a single geometry type
 
         plot() { }
 
@@ -62,22 +91,71 @@ namespace step_log {
         data_t data;
     };
 
-    //the order of the geometries should be defined, so use tuple instead
-    template<class... GeometryType>
-    struct plots {
-        using group_t = std::tuple<plot<GeometryType>...>;
-        template<size_t I>
-        using group_n_t = typename std::tuple_element<I, group_t>::type;
-        using stride = std::tuple_size<group_t>;
-        using data_t = std::vector<group_t>;
-
-
-        plots() { }
-
-        plots(data_t &&d) : data(std::move(d)) { }
-
-        data_t data;
-    };
-};
+//    struct plots {
+//        using data_t = std::vector<std::unique_ptr<geometry>>;
+//
+//
+//        plots
+////        plots() { }
+////
+////        plots(data_t &&d) : data(std::move(d)) { }
+////
+//        data_t data;
+//
+//        template <class NumericT, size_t Dimension>
+//        std::unique_ptr<plot<geometry>> AddPlot(const enum_geometry & t_geometry)
+//        {
+//            switch(t_geometry) {
+//                case enum_geometry::e_point:
+//                    return std::make_unique<plot<point<NumericT, Dimension>>>();
+//                case enum_geometry::e_line:
+//                    return std::make_unique<plot<line<NumericT, Dimension>>>();
+//                case enum_geometry::e_polygon:
+//                    return std::make_unique<plot<polygon<NumericT, Dimension>>>();
+//            }
+//        }
+//
+//        template <size_t Dimension>
+//        std::unique_ptr<geometry> AddPlot(const enum_geometry & t_geometry, const enum_numeric & t_numeric)
+//        {
+//            switch(t_numeric) {
+//                case enum_numeric::e_int8:
+//                    return AddPlot<Dimension,int8_t>(t_geometry);
+//                case enum_numeric::e_int16:
+//                    return AddPlot<Dimension,int16_t>(t_geometry);
+//                case enum_numeric::e_int32:
+//                    return AddPlot<Dimension,int32_t>(t_geometry);
+//                case enum_numeric::e_int64:
+//                    return AddPlot<Dimension,int64_t>(t_geometry);
+//                case enum_numeric::e_uint8:
+//                    return AddPlot<Dimension,uint8_t>(t_geometry);
+//                case enum_numeric::e_uint16:
+//                    return AddPlot<Dimension,uint16_t>(t_geometry);
+//                case enum_numeric::e_uint32:
+//                    return AddPlot<Dimension,uint32_t>(t_geometry);
+//                case enum_numeric::e_uint64:
+//                    return AddPlot<Dimension,uint64_t>(t_geometry);
+//                case enum_numeric::e_float32:
+//                    return AddPlot<Dimension,float>(t_geometry);
+//                case enum_numeric::e_float64:
+//                    return AddPlot<Dimension,double>(t_geometry);
+//            }
+//        }
+//
+//        std::unique_ptr<geometry> AddPlot(const enum_geometry & t_geometry, const enum_numeric & t_numeric, const enum_dimension & t_dimension)
+//        {
+//            switch(t_dimension) {
+//                case enum_dimension::e_1d:
+//                    return AddPlot<1>(t_geometry, t_numeric);
+//                case enum_dimension::e_2d:
+//                    return AddPlot<2>(t_geometry, t_numeric);
+//                case enum_dimension::e_3d:
+//                    return AddPlot<3>(t_geometry, t_numeric);
+//                case enum_dimension::e_4d:
+//                    return AddPlot<4>(t_geometry, t_numeric);
+//            }
+//
+//    };
+}
 
 #endif //PROJECT_STEP_LOG_H

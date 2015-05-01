@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS "${CM_CXX_FLAGS} --stdlib=libstdc++ --std=c++14")
 
 set(SOURCE_FILES main.cpp)
 
-add_executable(${EXECUTABLE_NAME} ${SOURCE_FILES} step_log/step_log_test.cpp step_log/step_log.h)
+add_executable(${EXECUTABLE_NAME} ${SOURCE_FILES})
 
 add_subdirectory(step_log)
 
@@ -16,7 +16,7 @@ find_package(Curses)
 
 include_directories(${Boost_INCLUDE_DIR})
 include_directories(${Curses_INCLUDE_DIR})
-include_directories(~/repos/brainstem_breakfast/source/)
+include_directories(/home/brian/repos/brainstem_breakfast/source/)
 
 target_link_libraries(${EXECUTABLE_NAME}
     ${Boost_LIBRARIES})

@@ -3,10 +3,11 @@
 int main(int argc, char **argv) {
     using namespace step_log;
 
-    using plots_t = plots <point<double, 2>, line<double, 2>, line<double, 2>>;
+    plot<point<double, 2> test;
+   // using plots_t = plots <point<double, 2>, line<double, 2>, line<double, 2>>;
 
-    plots_t ps;
-    plots_t::group_t group;
+    //plots_t ps;
+   // plots_t::group_t group;
 
     //TODO(brian):work on access to model how deserialization will work
     //TODO(brian):work on access to model how creation/serialization will work
