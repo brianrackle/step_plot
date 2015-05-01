@@ -3,7 +3,7 @@
 int main(int argc, char **argv) {
     using namespace step_log;
 
-    plot<point<double, 2> test;
+    plots test;
    // using plots_t = plots <point<double, 2>, line<double, 2>, line<double, 2>>;
 
     //plots_t ps;
