@@ -104,55 +104,58 @@ namespace step_log
         data_t data;
 
         template <class NumericT, size_t Dimension>
-        std::unique_ptr<plot_base> AddPlot(const enum_geometry & t_geometry)
+        data_t::iterator add(const enum_geometry & t_geometry)
         {
             switch(t_geometry) {
                 case enum_geometry::e_point:
-                    return std::make_unique<plot<point<NumericT, Dimension>>>();
+                    data.emplace_back(std::make_unique<plot<point<NumericT, Dimension>>>());
+                    return --data.end();
                 case enum_geometry::e_line:
-                    return std::make_unique<plot<line<NumericT, Dimension>>>();
+                    data.emplace_back(std::make_unique<plot<line<NumericT, Dimension>>>());
+                    return --data.end();
                 case enum_geometry::e_polygon:
-                    return std::make_unique<plot<polygon<NumericT, Dimension>>>();
+                    data.emplace_back(std::make_unique<plot<polygon<NumericT, Dimension>>>());
+                    return --data.end();
             }
         }
 
         template <size_t Dimension>
-        std::unique_ptr<plot_base> AddPlot(const enum_geometry & t_geometry, const enum_numeric & t_numeric)
+        data_t::iterator add(const enum_geometry & t_geometry, const enum_numeric & t_numeric)
         {
             switch(t_numeric) {
                 case enum_numeric::e_int8:
-                    return AddPlot<int8_t, Dimension>(t_geometry);
+                    return add<int8_t, Dimension>(t_geometry);
                 case enum_numeric::e_int16:
-                    return AddPlot<int16_t, Dimension>(t_geometry);
+                    return add<int16_t, Dimension>(t_geometry);
                 case enum_numeric::e_int32:
-                    return AddPlot<int32_t, Dimension>(t_geometry);
+                    return add<int32_t, Dimension>(t_geometry);
                 case enum_numeric::e_int64:
-                    return AddPlot<int64_t, Dimension>(t_geometry);
+                    return add<int64_t, Dimension>(t_geometry);
                 case enum_numeric::e_uint8:
-                    return AddPlot<uint8_t, Dimension>(t_geometry);
+                    return add<uint8_t, Dimension>(t_geometry);
                 case enum_numeric::e_uint16:
-                    return AddPlot<uint16_t, Dimension>(t_geometry);
+                    return add<uint16_t, Dimension>(t_geometry);
                 case enum_numeric::e_uint32:
-                    return AddPlot<uint32_t, Dimension>(t_geometry);
+                    return add<uint32_t, Dimension>(t_geometry);
                 case enum_numeric::e_uint64:
-                    return AddPlot<uint64_t, Dimension>(t_geometry);
+                    return add<uint64_t, Dimension>(t_geometry);
                 case enum_numeric::e_float32:
-                    return AddPlot<float, Dimension>(t_geometry);
+                    return add<float, Dimension>(t_geometry);
                 case enum_numeric::e_float64:
-                    return AddPlot<double, Dimension>(t_geometry);
+                    return add<double, Dimension>(t_geometry);
             }
         }
 
-        std::unique_ptr<plot_base> AddPlot(const enum_geometry & t_geometry, const enum_numeric & t_numeric, const enum_dimension & t_dimension) {
+        data_t::iterator add(const enum_geometry & t_geometry, const enum_numeric & t_numeric, const enum_dimension & t_dimension) {
             switch (t_dimension) {
                 case enum_dimension::e_1d:
-                    return AddPlot<1>(t_geometry, t_numeric);
+                    return add<1>(t_geometry, t_numeric);
                 case enum_dimension::e_2d:
-                    return AddPlot<2>(t_geometry, t_numeric);
+                    return add<2>(t_geometry, t_numeric);
                 case enum_dimension::e_3d:
-                    return AddPlot<3>(t_geometry, t_numeric);
+                    return add<3>(t_geometry, t_numeric);
                 case enum_dimension::e_4d:
-                    return AddPlot<4>(t_geometry, t_numeric);
+                    return add<4>(t_geometry, t_numeric);
             }
         }
 
