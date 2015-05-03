@@ -1,8 +1,11 @@
 #ifndef PROJECT_STEP_LOG_H
 #define PROJECT_STEP_LOG_H
 
+#include <string>
 #include <vector>
+#include <functional>
 #include "cereal/archives/json.hpp"
+#include "format.h"
 
 namespace step_log
 {
@@ -39,6 +42,23 @@ namespace step_log
 
     template<class NumericT, size_t Dimension>
     using vertex = std::array<NumericT, Dimension>;
+
+    template <class NumericT, typename std::enable_if<std::is_integral<NumericT>::value>::type * = nullptr>
+    std::string to_string(const NumericT & t_num)
+    {
+        return fmt::format("{:-d}", t_num);
+    }
+
+    template <class NumericT, typename std::enable_if<std::is_floating_point<NumericT>::value>::type * = nullptr>
+    std::string to_string(const NumericT & t_num)
+    {
+        return fmt::format("{:-.16f}", t_num);
+    }
+
+//    std::string to_string(const vertex & t_vertex)
+//    {
+//        return fmt::format("{}");
+//    }
 
     //TODO(brian): plot might need to be specialized for each geometry for correct plot rendering
     //TODO(brian): create way to iterate points, add points, remove points
@@ -98,11 +118,14 @@ namespace step_log
         data_t data;
     };
 
+    //TODO(brian) logic for rendering a plot should be inside plot, then inside geometry
     struct plots {
         using data_t = std::vector<std::unique_ptr<plot_base>>;
-
+        //TODO(brian): plots should store vector of enums
         data_t data;
 
+        //TODO(brian): access should be similarly templated
+        //TODO(brian): create a way for a passed template to execute. template specialization with function operator overload, passed iterator/pointer to plot
         template <class NumericT, size_t Dimension>
         data_t::iterator add(const enum_geometry & t_geometry)
         {

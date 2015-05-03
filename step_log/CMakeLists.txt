@@ -13,6 +13,9 @@ find_package(Boost COMPONENTS system program_options filesystem)
 
 include_directories(${Boost_INCLUDE_DIR})
 include_directories(/home/brian/repos/cereal/include)
+include_directories(/home/brian/repos/cppformat)
 
 target_link_libraries(${EXECUTABLE_NAME}
     ${Boost_LIBRARIES})
+target_link_libraries(${EXECUTABLE_NAME}
+    /home/brian/repos/cppformat/build/libformat.a)
