@@ -7,6 +7,9 @@
 #include "cereal/archives/json.hpp"
 #include "format.h"
 
+//library info:
+//http://cppformat.readthedocs.org/en/stable/
+//http://gnuplot.sourceforge.net/docs_5.0/gnuplot.pdf
 namespace step_log
 {
     constexpr size_t x = 0, y = 1, z = 2;
