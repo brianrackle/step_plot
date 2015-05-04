@@ -71,14 +71,16 @@ namespace step_log
     {
         std::string operator()(const VertexT & t_vertex)
         {
-            return fmt::format("{0} {1}", to_string_helper<VertexT, Count - 1>()(t_vertex), to_string(t_vertex[Count - 1]));
+            constexpr auto count_m = Count - 1;
+            return fmt::format("{0} {1}", to_string_helper<VertexT, count_m>()(t_vertex), to_string(t_vertex[count_m]));
         }
     };
 
     template<class NumericT, size_t Dimension>
     std::string to_string(const vertex<NumericT, Dimension> & t_vertex)
     {
-        return to_string_helper<vertex<NumericT, Dimension>, Dimension>()(t_vertex);
+        using vertex_t = std::remove_cv_t<std::remove_reference_t<decltype(t_vertex)>>;
+        return to_string_helper<vertex_t, Dimension>()(t_vertex);
     }
 
     //TODO(brian): plot might need to be specialized for each geometry for correct plot rendering
