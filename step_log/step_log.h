@@ -55,14 +55,34 @@ namespace step_log
         return fmt::format("{:-.16f}", t_num);
     }
 
-//    std::string to_string(const vertex & t_vertex)
-//    {
-//        return fmt::format("{}");
-//    }
+    template <class VertexT, size_t Count> class to_string_helper;
+
+    template <class VertexT>
+    struct to_string_helper<VertexT, 1>
+    {
+        std::string operator()(const VertexT & t_vertex)
+        {
+            return to_string(t_vertex[0]);
+        }
+    };
+
+    template <class VertexT, size_t Count>
+    struct to_string_helper : to_string_helper<VertexT, Count - 1>
+    {
+        std::string operator()(const VertexT & t_vertex)
+        {
+            return fmt::format("{0} {1}", to_string_helper<VertexT, Count - 1>()(t_vertex), to_string(t_vertex[Count - 1]));
+        }
+    };
+
+    template<class NumericT, size_t Dimension>
+    std::string to_string(const vertex<NumericT, Dimension> & t_vertex)
+    {
+        return to_string_helper<vertex<NumericT, Dimension>, Dimension>()(t_vertex);
+    }
 
     //TODO(brian): plot might need to be specialized for each geometry for correct plot rendering
     //TODO(brian): create way to iterate points, add points, remove points
-
 
     template<class NumericT, size_t Dimension>
     struct point {
