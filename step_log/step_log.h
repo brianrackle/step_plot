@@ -11,80 +11,85 @@ namespace step_log
 {
     constexpr size_t x = 0, y = 1, z = 2;
 
-    enum class enum_geometry
-    {
-        e_point = 0,
-        e_line,
-        e_polygon
-    };
+//    enum class enum_geometry
+//    {
+//        e_point = 0,
+//        e_line,
+//        e_polygon
+//    };
+//
+//    enum class enum_numeric
+//    {
+//        e_int8 = 0,
+//        e_int16,
+//        e_int32,
+//        e_int64,
+//        e_uint8,
+//        e_uint16,
+//        e_uint32,
+//        e_uint64,
+//        e_float32,
+//        e_float64
+//    };
+//
+//    enum class enum_dimension
+//    {
+//        e_1d = 0,
+//        e_2d,
+//        e_3d,
+//        e_4d
+//    };
 
-    enum class enum_numeric
-    {
-        e_int8 = 0,
-        e_int16,
-        e_int32,
-        e_int64,
-        e_uint8,
-        e_uint16,
-        e_uint32,
-        e_uint64,
-        e_float32,
-        e_float64
-    };
-
-    enum class enum_dimension
-    {
-        e_1d = 0,
-        e_2d,
-        e_3d,
-        e_4d
-    };
-
+    //TODO(brian): plots seperated by an 'e'(implicit indexing), or "\n\n"(explicit indexing)
+    //segments should be seperated by a single newline, polyline/polygon no seperation
+    //ploting with '-' file means all plots repeated for each explicit index
+    //or data listed in order with implicit indexing ('e' seperators)
+    //gnuplot 5 supports $VAR << EOD with indexing into data
     template<class NumericT, size_t Dimension>
     using vertex = std::array<NumericT, Dimension>;
 
-    template <class NumericT, typename std::enable_if<std::is_integral<NumericT>::value>::type * = nullptr>
-    std::string to_string(const NumericT & t_num)
+    template <class StreamT, class NumericT, typename std::enable_if<std::is_integral<NumericT>::value>::type * = nullptr>
+    void write(StreamT & stream, const NumericT & t_num)
     {
-        return fmt::format("{:-d}", t_num);
+        stream.write("{:-d}", t_num);
     }
 
-    template <class NumericT, typename std::enable_if<std::is_floating_point<NumericT>::value>::type * = nullptr>
-    std::string to_string(const NumericT & t_num)
+    template <class StreamT, class NumericT, typename std::enable_if<std::is_floating_point<NumericT>::value>::type * = nullptr>
+    void write(StreamT & stream, const NumericT & t_num)
     {
-        return fmt::format("{:-.16f}", t_num);
+        stream.write("{:-.16f}", t_num);
     }
 
-    template <class VertexT, size_t Count> class to_string_helper;
+    template <class StreamT, class VertexT, size_t Count> class write_helper;
 
-    template <class VertexT>
-    struct to_string_helper<VertexT, 1>
+    template <class StreamT, class VertexT>
+    struct write_helper<StreamT, VertexT, 1>
     {
-        std::string operator()(const VertexT & t_vertex)
+        void operator()(StreamT & stream, const VertexT & t_vertex)
         {
-            return to_string(t_vertex[0]);
+            write(stream, t_vertex[0]);
         }
     };
 
-    template <class VertexT, size_t Count>
-    struct to_string_helper : to_string_helper<VertexT, Count - 1>
+    template <class StreamT, class VertexT, size_t Count>
+    struct write_helper : write_helper<StreamT, VertexT, Count - 1>
     {
-        std::string operator()(const VertexT & t_vertex)
+        void operator()(StreamT & stream, const VertexT & t_vertex)
         {
             constexpr auto count_m = Count - 1;
-            return fmt::format("{0} {1}", to_string_helper<VertexT, count_m>()(t_vertex), to_string(t_vertex[count_m]));
+            write_helper<StreamT, VertexT, count_m>()(stream, t_vertex);
+            stream << ' ';
+            write(stream, t_vertex[count_m]);
         }
     };
 
-    template<class NumericT, size_t Dimension>
-    std::string to_string(const vertex<NumericT, Dimension> & t_vertex)
+    template<class StreamT, class NumericT, size_t Dimension>
+    void write(StreamT & stream, const vertex<NumericT, Dimension> & t_vertex)
     {
         using vertex_t = std::remove_cv_t<std::remove_reference_t<decltype(t_vertex)>>;
-        return to_string_helper<vertex_t, Dimension>()(t_vertex);
+        write_helper<StreamT, vertex_t, Dimension>()(stream, t_vertex);
+        stream << '\n';
     }
-
-    //TODO(brian): plot might need to be specialized for each geometry for correct plot rendering
-    //TODO(brian): create way to iterate points, add points, remove points
 
     template<class NumericT, size_t Dimension>
     struct point {
@@ -92,8 +97,10 @@ namespace step_log
         using numeric_t = NumericT;
         using dimension_t = std::tuple_size<data_t>;
 
-//        point() { }
-//        point(data_t &&d) : data(std::move(d)) { }
+//        std::string write()
+//        {
+//            return fmt::format("{0}\n", step_log::to_string(data));
+//        }
 
         data_t data;
     };
@@ -104,8 +111,10 @@ namespace step_log
         using numeric_t = NumericT;
         using dimension_t = std::tuple_size<data_t>;
 
-//        line() { }
-//        line(data_t &&d) : data(std::move(d)) { }
+        std::string to_string()
+        {
+            return fmt::format("{0}");
+        }
 
         data_t data;
     };
@@ -140,69 +149,69 @@ namespace step_log
         data_t data;
     };
 
-    //TODO(brian) logic for rendering a plot should be inside plot, then inside geometry
     struct plots {
         using data_t = std::vector<std::unique_ptr<plot_base>>;
-        //TODO(brian): plots should store vector of enums
+        using writer_t = fmt::MemoryWriter;
+
         data_t data;
-
-        //TODO(brian): access should be similarly templated
-        //TODO(brian): create a way for a passed template to execute. template specialization with function operator overload, passed iterator/pointer to plot
-        template <class NumericT, size_t Dimension>
-        data_t::iterator add(const enum_geometry & t_geometry)
-        {
-            switch(t_geometry) {
-                case enum_geometry::e_point:
-                    data.emplace_back(std::make_unique<plot<point<NumericT, Dimension>>>());
-                    return --data.end();
-                case enum_geometry::e_line:
-                    data.emplace_back(std::make_unique<plot<line<NumericT, Dimension>>>());
-                    return --data.end();
-                case enum_geometry::e_polygon:
-                    data.emplace_back(std::make_unique<plot<polygon<NumericT, Dimension>>>());
-                    return --data.end();
-            }
-        }
-
-        template <size_t Dimension>
-        data_t::iterator add(const enum_geometry & t_geometry, const enum_numeric & t_numeric)
-        {
-            switch(t_numeric) {
-                case enum_numeric::e_int8:
-                    return add<int8_t, Dimension>(t_geometry);
-                case enum_numeric::e_int16:
-                    return add<int16_t, Dimension>(t_geometry);
-                case enum_numeric::e_int32:
-                    return add<int32_t, Dimension>(t_geometry);
-                case enum_numeric::e_int64:
-                    return add<int64_t, Dimension>(t_geometry);
-                case enum_numeric::e_uint8:
-                    return add<uint8_t, Dimension>(t_geometry);
-                case enum_numeric::e_uint16:
-                    return add<uint16_t, Dimension>(t_geometry);
-                case enum_numeric::e_uint32:
-                    return add<uint32_t, Dimension>(t_geometry);
-                case enum_numeric::e_uint64:
-                    return add<uint64_t, Dimension>(t_geometry);
-                case enum_numeric::e_float32:
-                    return add<float, Dimension>(t_geometry);
-                case enum_numeric::e_float64:
-                    return add<double, Dimension>(t_geometry);
-            }
-        }
-
-        data_t::iterator add(const enum_geometry & t_geometry, const enum_numeric & t_numeric, const enum_dimension & t_dimension) {
-            switch (t_dimension) {
-                case enum_dimension::e_1d:
-                    return add<1>(t_geometry, t_numeric);
-                case enum_dimension::e_2d:
-                    return add<2>(t_geometry, t_numeric);
-                case enum_dimension::e_3d:
-                    return add<3>(t_geometry, t_numeric);
-                case enum_dimension::e_4d:
-                    return add<4>(t_geometry, t_numeric);
-            }
-        }
+        writer_t plot_stream;
+//        //TODO(brian): access should be similarly templated
+//        //TODO(brian): create a way for a passed template to execute. template specialization with function operator overload, passed iterator/pointer to plot
+//        template <class NumericT, size_t Dimension>
+//        data_t::iterator add(const enum_geometry & t_geometry)
+//        {
+//            switch(t_geometry) {
+//                case enum_geometry::e_point:
+//                    data.emplace_back(std::make_unique<plot<point<NumericT, Dimension>>>());
+//                    return --data.end();
+//                case enum_geometry::e_line:
+//                    data.emplace_back(std::make_unique<plot<line<NumericT, Dimension>>>());
+//                    return --data.end();
+//                case enum_geometry::e_polygon:
+//                    data.emplace_back(std::make_unique<plot<polygon<NumericT, Dimension>>>());
+//                    return --data.end();
+//            }
+//        }
+//
+//        template <size_t Dimension>
+//        data_t::iterator add(const enum_geometry & t_geometry, const enum_numeric & t_numeric)
+//        {
+//            switch(t_numeric) {
+//                case enum_numeric::e_int8:
+//                    return add<int8_t, Dimension>(t_geometry);
+//                case enum_numeric::e_int16:
+//                    return add<int16_t, Dimension>(t_geometry);
+//                case enum_numeric::e_int32:
+//                    return add<int32_t, Dimension>(t_geometry);
+//                case enum_numeric::e_int64:
+//                    return add<int64_t, Dimension>(t_geometry);
+//                case enum_numeric::e_uint8:
+//                    return add<uint8_t, Dimension>(t_geometry);
+//                case enum_numeric::e_uint16:
+//                    return add<uint16_t, Dimension>(t_geometry);
+//                case enum_numeric::e_uint32:
+//                    return add<uint32_t, Dimension>(t_geometry);
+//                case enum_numeric::e_uint64:
+//                    return add<uint64_t, Dimension>(t_geometry);
+//                case enum_numeric::e_float32:
+//                    return add<float, Dimension>(t_geometry);
+//                case enum_numeric::e_float64:
+//                    return add<double, Dimension>(t_geometry);
+//            }
+//        }
+//
+//        data_t::iterator add(const enum_geometry & t_geometry, const enum_numeric & t_numeric, const enum_dimension & t_dimension) {
+//            switch (t_dimension) {
+//                case enum_dimension::e_1d:
+//                    return add<1>(t_geometry, t_numeric);
+//                case enum_dimension::e_2d:
+//                    return add<2>(t_geometry, t_numeric);
+//                case enum_dimension::e_3d:
+//                    return add<3>(t_geometry, t_numeric);
+//                case enum_dimension::e_4d:
+//                    return add<4>(t_geometry, t_numeric);
+//            }
+//        }
 
     };
 }

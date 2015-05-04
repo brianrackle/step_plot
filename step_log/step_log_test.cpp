@@ -4,13 +4,17 @@
 int main(int argc, char **argv) {
     using namespace step_log;
 
-    plots test;
-    auto plot = test.add(enum_geometry::e_line, enum_numeric::e_float64, enum_dimension::e_2d);
+ //   plots test;
+//    auto plot = test.add(enum_geometry::e_line, enum_numeric::e_float64, enum_dimension::e_2d);
     //plot
 
-    vertex<double, 3> v0 = {{100000.12345678, 1, 2}};
+    fmt::MemoryWriter out;
 
-    std::cout << to_string(123456789) << std::endl;
-    std::cout << to_string(100.1234567800000) << std::endl;
-    std::cout << to_string(v0) << std::endl;
+
+    vertex<double, 3> p0 = {100000.12345678, 1, 2};
+    write(out, p0);
+    std::cout << out.c_str() << std::endl;
+    //td::cout << p0.to_string() << std::endl;
+
+    //out.write
 }
