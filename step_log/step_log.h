@@ -97,10 +97,11 @@ namespace step_log
         using numeric_t = NumericT;
         using dimension_t = std::tuple_size<data_t>;
 
-//        std::string write()
-//        {
-//            return fmt::format("{0}\n", step_log::to_string(data));
-//        }
+        template <class StreamT>
+        void write(StreamT & stream) const
+        {
+            step_log::write(stream, data);
+        }
 
         data_t data;
     };
@@ -111,25 +112,27 @@ namespace step_log
         using numeric_t = NumericT;
         using dimension_t = std::tuple_size<data_t>;
 
-        std::string to_string()
+        template <class StreamT>
+        void write(StreamT & stream) const
         {
-            return fmt::format("{0}");
+            step_log::write(stream, data[0]);
+            step_log::write(stream, data[1]);
         }
 
         data_t data;
     };
 
-    template<class NumericT, size_t Dimension>
-    struct polygon {
-        using data_t = std::vector<vertex<NumericT, Dimension>>;
-        using numeric_t = NumericT;
-        using dimension_t = std::tuple_size<data_t>;
-
-//        polygon() { }
-//        polygon(data_t &&d) : data(std::move(d)) { }
-
-        data_t data;
-    };
+//    template<class NumericT, size_t Dimension>
+//    struct polygon {
+//        using data_t = std::vector<vertex<NumericT, Dimension>>;
+//        using numeric_t = NumericT;
+//        using dimension_t = std::tuple_size<data_t>;
+//
+////        polygon() { }
+////        polygon(data_t &&d) : data(std::move(d)) { }
+//
+//        data_t data;
+//    };
 
     struct plot_base
     {
@@ -143,6 +146,17 @@ namespace step_log
         using geometry_t = GeometryT;
         using numeric_t = typename GeometryT::numeric_t;
         using dimension_t = typename GeometryT::dimension_t;
+
+        template <class StreamT>
+        void write(StreamT & stream) const
+        {
+            for(const auto & d : data)
+            {
+                d.write(stream);
+            }
+            stream << '\n';
+            stream << '\n';
+        }
 
         virtual void unknown(){ }
 
